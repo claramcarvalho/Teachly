@@ -52,5 +52,15 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, HomeTeacher.class);
+                startActivity(intent);
+            }
+        });
+
+
+
     }
 }
