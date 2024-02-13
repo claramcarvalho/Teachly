@@ -15,4 +15,10 @@
         android:layout_height="wrap_content"
         android:text="Hello World"
         android:textSize="25dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hi Kathleen, this was written by Clara"
+        android:textSize="18dp"/>
 </LinearLayout>
