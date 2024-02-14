@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Teachly</string>
+    <string name="user_picture">User Picture</string>
+    <string name="edit_image_pencil">Edit Image Pencil</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="save_account">Save Account</string>
+    <string name="delete_your_account">Delete Your Account</string>
+    <string name="name">Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="telephone_number">Telephone Number</string>
+    <string name="password">Password</string>
 </resources>
