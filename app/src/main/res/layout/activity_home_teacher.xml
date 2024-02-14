@@ -10,26 +10,7 @@
     android:padding="15dp"
     android:background="@color/lightGreen">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/logoImageView"
-            android:layout_width="110dp"
-            android:layout_height="100dp"
-            android:src="@drawable/logo_clean"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"/>
-
-        <ImageButton
-            android:id="@+id/btnMenu"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/icon_menu"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
-    </RelativeLayout>
+    <include layout="@layout/menu_bar_with_logo"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
