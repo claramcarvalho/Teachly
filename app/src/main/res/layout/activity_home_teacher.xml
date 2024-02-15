@@ -7,14 +7,15 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:padding="15dp"
+
     android:background="@color/lightGreen">
 
     <include layout="@layout/menu_bar_with_logo"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +24,7 @@
             android:layout_centerVertical="true"
             android:text="Check your classes"
             android:fontFamily="@font/montserrat_alternates_semi_bold"
-            android:textSize="18dp"/>
+            android:textSize="18sp"/>
 
         <ImageButton
             android:layout_width="35dp"
@@ -42,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:padding="15dp">
 
         <ListView
             android:layout_width="wrap_content"
