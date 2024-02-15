@@ -3,7 +3,11 @@ package com.example.teachly;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -11,6 +15,8 @@ public class ClassPageStudent extends AppCompatActivity {
 
     TabLayout tabStudent;
     ViewPager2 viewPagerStudent;
+    ImageView classShape;
+    TextView className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +24,11 @@ public class ClassPageStudent extends AppCompatActivity {
 
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
+
+        classShape = findViewById(R.id.class_shape);
+        className = findViewById(R.id.class_title);
+        classShape.setColorFilter(R.color.darkGreen, PorterDuff.Mode.SRC_IN);
+        className.setText("French Class Beginner");
 
         tabStudent = findViewById(R.id.tabLayoutStudent);
         viewPagerStudent = findViewById(R.id.viewPagerStudent);

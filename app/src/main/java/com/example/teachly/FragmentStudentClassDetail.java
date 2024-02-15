@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +60,13 @@ public class FragmentStudentClassDetail extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_class_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_student_class_detail, container, false);
+
+        TextView classDesc = rootView.findViewById(R.id.class_description);
+        TextView classTag = rootView.findViewById(R.id.class_tag);
+        classDesc.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus.");
+        classTag.setText("French");
+
+        return rootView;
     }
 }

@@ -60,7 +60,7 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(context.getApplicationContext(), className[position] ,Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context,ClassPageStudent.class);
+                Intent intent = new Intent(context,ClassPageTeacher.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
