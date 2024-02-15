@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
 
-
 public class MenuBar {
 
     private Context context;
