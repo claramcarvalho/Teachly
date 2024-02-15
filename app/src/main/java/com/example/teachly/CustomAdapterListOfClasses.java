@@ -2,6 +2,7 @@ package com.example.teachly;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -59,10 +60,20 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(context.getApplicationContext(), className[position] ,Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context,ClassPageTeacher.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                ///////////////////////////////////////// Testing the type of the user
+                SharedPreferences sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+                String typeUser = sharedPreferences.getString("type", "");
+                if (typeUser.equals("Teacher")){
+                    Intent intent = new Intent(context,ClassPageTeacher.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+                if (typeUser.equals("Student")){
+                    Intent intent = new Intent(context,ClassPageStudent.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+
             }
         });
         return convertView;
