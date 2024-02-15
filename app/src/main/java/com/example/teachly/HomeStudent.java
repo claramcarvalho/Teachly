@@ -1,10 +1,14 @@
 package com.example.teachly;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -18,6 +22,8 @@ public class HomeStudent extends AppCompatActivity {
     String[] nbStu = {"5 students", "4 students", "7 students"};
 
     SharedPreferences sharedPreferences;
+
+    ImageButton btnAddClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,5 +44,19 @@ public class HomeStudent extends AppCompatActivity {
         listOfClasses = findViewById(R.id.listOfClassStudent);
         CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
         listOfClasses.setAdapter(adapter);
+
+        ///////////////////////////////////////////////////////// Testando abrir modal
+        btnAddClass = findViewById(R.id.btn_student_add_class);
+        btnAddClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_student_add_class, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeStudent.this);
+                builder.setView(dialogView);
+                //builder.setTitle("Search new tutors");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 }

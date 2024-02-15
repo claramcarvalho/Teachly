@@ -84,24 +84,29 @@ public class Signup extends AppCompatActivity {
                 editor.apply();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
-                builder.setTitle("Account created").setMessage("Welcome to TeachLy!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                builder.setTitle("Account created");
+                builder.setMessage("Welcome to TeachLy!");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Signup.this, Login.class);
                         startActivity(intent);
                         dialog.dismiss();
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(Signup.this, "Cancelou", Toast.LENGTH_SHORT).show();
                     }
-                }).setIcon(R.drawable.icon_check_30).setNeutralButton("OI", new DialogInterface.OnClickListener() {
+                });
+                builder.setIcon(R.drawable.icon_check_30).setNeutralButton("OI", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                }).setCancelable(false);// Impede o fechamento do AlertDialog clicando fora dele
+                });
+                builder.setCancelable(false);// Impede o fechamento do AlertDialog clicando fora dele
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
