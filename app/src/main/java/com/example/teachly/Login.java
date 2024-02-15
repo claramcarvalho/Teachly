@@ -79,18 +79,19 @@ public class Login extends AppCompatActivity {
                 String email = edtEmail.getText().toString();
                 String password = edtPassword.getText().toString();
                 /////////////////////////////////////////////////// Adicionar Regex e select user
-                if (email.length() < 1){
+                if (email.length() != 1){
+                    Toast.makeText(Login.this, "Enter email 't' to Teacher and 's' to Student", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (password.length() < 1){
+                /*if (password.length() < 1){
                     return;
-                }
+                }*/
                 //////////////////////////////////////////////////////
 
                 ////////////////////////////////////////////////////// Alterar pra salvar na sessão user object
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("email", edtEmail.getText().toString());
-                editor.putString("password", edtPassword.getText().toString());
+                editor.putString("email", email);
+                editor.putString("password", password);
 
                 ////////////////////////////////////////////////////// Testando apenas pra funcionar agora quando formos logar, escolher tipo de user
                 if (email.equals("s")) {
