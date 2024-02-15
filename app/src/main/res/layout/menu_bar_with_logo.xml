@@ -13,7 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"/>
-    <ImageView
+    <ImageButton
         android:id="@+id/btnMenu"
         android:layout_width="30dp"
         android:layout_height="30dp"

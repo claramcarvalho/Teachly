@@ -10,20 +10,14 @@ import android.widget.PopupMenu;
 
 public class HomeTeacher extends AppCompatActivity {
 
-    ImageButton menu;
+    //ImageButton menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_teacher);
 
-        menu = findViewById(R.id.btnMenu);
-
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MenuUtils.showMenu(HomeTeacher.this, v);
-            }
-        });
+        MenuBar menuBar = new MenuBar(this);
+        menuBar.setupActionBar();
     }
 }
