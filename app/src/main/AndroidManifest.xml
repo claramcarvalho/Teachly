@@ -13,11 +13,20 @@
         android:theme="@style/Theme.Teachly"
         tools:targetApi="31">
         <activity
+            android:name=".FragmentTeacherStudents"
+            android:exported="false" />
+        <activity
+            android:name=".FragmentTeacherActivities"
+            android:exported="false" />
+        <activity
+            android:name=".ClassPageTeacher"
+            android:exported="false" />
+        <activity
             android:name=".HomeStudent"
             android:exported="false" />
         <activity
             android:name=".EditProfile"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".HomeTeacher"
             android:exported="false" />
