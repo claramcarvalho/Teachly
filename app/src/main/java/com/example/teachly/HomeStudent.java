@@ -3,8 +3,16 @@ package com.example.teachly;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ListView;
 
 public class HomeStudent extends AppCompatActivity {
+
+    ListView listOfClasses;
+
+    String[] colors = {"#fef8a0","#ff8a84","#75a9f9"};
+    String[] names = {"French Class Intermediate", "French Class Basic I", "Math With Luc"};
+
+    String[] nbStu = {"5 students", "4 students", "7 students"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,5 +21,9 @@ public class HomeStudent extends AppCompatActivity {
 
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
+
+        listOfClasses = findViewById(R.id.listOfClassStudent);
+        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
+        listOfClasses.setAdapter(adapter);
     }
 }
