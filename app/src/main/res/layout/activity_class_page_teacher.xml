@@ -23,7 +23,7 @@
             android:src="@drawable/icon_circle_40"/>
         <TextView
             android:id="@+id/classTitle"
-            android:layout_width="match_parent"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:text="French Class Intermediate"
             android:fontFamily="@font/montserrat_alternates_bold"
@@ -31,6 +31,12 @@
             android:layout_marginStart="10dp"
             android:maxLines="1"
             android:ellipsize="end"/>
+        <ImageView
+            android:id="@+id/editClass"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/icon_edit_40_default"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

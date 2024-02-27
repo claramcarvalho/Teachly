@@ -7,12 +7,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-public class HomeStudent extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class HomeStudent extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ListView listOfClasses;
 
@@ -56,7 +62,41 @@ public class HomeStudent extends AppCompatActivity {
                 //builder.setTitle("Search new tutors");
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
+                Spinner spinner = dialogView.findViewById(R.id.spinnerStudentSearchCategory);
+                List<String> categories = new ArrayList<String>();
+                categories.add("French");
+                categories.add("Math");
+                categories.add("Tefaq");
+                categories.add("C#");
+                categories.add("IELTS");
+                ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(HomeStudent.this, android.R.layout.simple_spinner_item, categories);
+                adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapterSpinner);
+                spinner.setOnItemSelectedListener(HomeStudent.this);
+
+
+                String[] photos = {"#fef8a0","#ff8a84","#75a9f9","#ff8a84","#75a9f9"};
+                String[] names = {"Fulano Ciclano","Fulano Ciclano","Fulano Ciclano","Fulano Ciclano","Fulano Ciclano"};
+                String[] emails = {"tutor1@gmail.com","tutor11111111111@gmail.com","tutor1@gmail.com", "tutor133445455665@gmail.com", "tutor1@gmail.com"};
+                String[] phones = {"4567896325", "4567896325","4567896325","4567896325", "4567896325"};
+                ListView listTutors = dialogView.findViewById(R.id.listTutors);
+                CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(), photos, names, emails, phones);
+                listTutors.setAdapter(adapter);
+
             }
         });
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String selectedCourse = parent.getItemAtPosition(position).toString();
+        Toast.makeText(this, "The course selected is " + selectedCourse, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

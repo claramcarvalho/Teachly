@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@color/mediumGray">
 
-    <!-- Seus elementos de formulário aqui -->
-    <EditText
-        android:id="@+id/editTextName"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search new tutors"
+        android:textSize="18dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/montserrat_alternates_semi_bold"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nome" />
+        android:layout_marginTop="15dp">
 
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email" />
+        <Spinner
+            android:id="@+id/spinnerStudentSearchCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <!-- Botão de envio -->
-    <Button
-        android:id="@+id/buttonSubmit"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:padding="5dp"
+            android:fontFamily="@font/montserrat_alternates_bold"
+            android:backgroundTint="@color/darkGreen"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listTutors"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enviar" />
+        android:layout_height="400dp"
+        android:divider="@color/mediumGray"
+        android:dividerHeight="5dp"/>
+
 </LinearLayout>
