@@ -43,11 +43,10 @@ public class Login extends AppCompatActivity {
         // Testando se tem sessão ativa
         Toast.makeText(this, savedEmail, Toast.LENGTH_SHORT).show();
 
-        if (!TextUtils.isEmpty(savedEmail) && !TextUtils.isEmpty(savedPassword)) {
+        if (!TextUtils.isEmpty(savedEmail)) {
             // O usuário já fez login anteriormente, você pode prosseguir diretamente para a próxima tela
             // ou pode preencher os campos de email e senha com as informações salvas
             edtEmail.setText(savedEmail);
-            edtPassword.setText(savedPassword);
         }
 
         togglePassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

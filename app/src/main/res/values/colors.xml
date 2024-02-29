@@ -9,8 +9,12 @@
     <color name="gray">#6D6D6D</color>
     <color name="mediumGray">#D8DFDF</color>
     <color name="lightGray">#EBEBEB</color>
-    <color name="yellow">#FFEB3B</color>
-    <color name="red">#FF0000</color>
-    <color name="blue">#2196F3</color>
+    <color name="yellow">#E5E15C</color>
+    <color name="red">#E55C5C</color>
+    <color name="blue">#5CA0E5</color>
+    <color name="pastelGreen">#6BE55C</color>
+    <color name="violet">#A05CE5</color>
+    <color name="orange">#E59A5C</color>
+
 
 </resources>

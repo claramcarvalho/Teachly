@@ -168,18 +168,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:drawableStartCompat="@drawable/icon_check_30"
-            android:text="@string/save_account"
-            android:textSize="17sp"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
             android:drawablePadding="10dp"
-            />
+            android:gravity="center_vertical"
+            android:text="@string/save_account"
+            android:textSize="17sp"
+            app:drawableStartCompat="@drawable/icon_check_30" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
