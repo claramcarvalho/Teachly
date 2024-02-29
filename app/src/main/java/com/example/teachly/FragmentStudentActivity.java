@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +59,18 @@ public class FragmentStudentActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_student_activity, container, false);
+
+        String[] names = {"Exam","Visit Museum","Homework"};
+        String[] descs = {"Exam about conjugations", "We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions ", "Do page 43 and 45 of the book"};
+        String[] dates = {"30/04/2024", "10/03/2024", "01/03/2024"};
+
+        ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
+        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
+        listOfActivities.setAdapter(adapter);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_activity, container, false);
+        return rootView;
     }
 }
