@@ -65,11 +65,15 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
                 String typeUser = sharedPreferences.getString("type", "");
                 if (typeUser.equals("Teacher")){
                     Intent intent = new Intent(context,ClassPageTeacher.class);
+                    intent.putExtra("className", className[position]);
+                    intent.putExtra("classColor", shapeColor[position]);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
                 if (typeUser.equals("Student")){
                     Intent intent = new Intent(context,ClassPageStudent.class);
+                    intent.putExtra("className", className[position]);
+                    intent.putExtra("classColor", shapeColor[position]);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }

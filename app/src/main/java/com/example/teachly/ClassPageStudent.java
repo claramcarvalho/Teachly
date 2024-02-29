@@ -27,8 +27,9 @@ public class ClassPageStudent extends AppCompatActivity {
 
         classShape = findViewById(R.id.class_shape);
         className = findViewById(R.id.class_title);
-        classShape.setColorFilter(R.color.darkGreen, PorterDuff.Mode.SRC_IN);
-        className.setText("French Class Beginner");
+        className.setText(getIntent().getStringExtra("className"));
+        classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
+
 
         tabStudent = findViewById(R.id.tabLayoutStudent);
         viewPagerStudent = findViewById(R.id.viewPagerStudent);

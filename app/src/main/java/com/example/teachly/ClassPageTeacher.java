@@ -3,6 +3,7 @@ package com.example.teachly;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -26,8 +27,9 @@ public class ClassPageTeacher extends AppCompatActivity {
 
         classShape = findViewById(R.id.classShape);
         className = findViewById(R.id.classTitle);
-        classShape.setColorFilter(R.color.darkGreen, PorterDuff.Mode.SRC_IN);
-        className.setText("French Class Beginner");
+
+        className.setText(getIntent().getStringExtra("className"));
+        classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
 
         tabTeacher = findViewById(R.id.tabLayoutTeacher);
         viewPagerTeacher = findViewById(R.id.viewPagerTeacher);

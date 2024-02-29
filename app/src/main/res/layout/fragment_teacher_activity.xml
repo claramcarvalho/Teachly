@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/yellow"
-    tools:context=".FragmentTeacherActivity">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/lightGreen"
+    android:padding="15dp">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fragment Activity"
-        android:layout_gravity="center"
-        android:textSize="30dp"/>
-</FrameLayout>
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:text="List of Activities"
+        android:fontFamily="@font/montserrat_alternates_semi_bold"
+        android:textSize="18sp"
+        android:layout_marginBottom="15dp"/>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listOfActivities"
+        android:divider="@color/lightGreen"
+        android:dividerHeight="5dp"/>
+</LinearLayout>
