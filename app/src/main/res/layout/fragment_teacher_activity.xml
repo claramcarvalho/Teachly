@@ -9,15 +9,30 @@
     android:background="@color/lightGreen"
     android:padding="15dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:text="List of Activities"
-        android:fontFamily="@font/montserrat_alternates_semi_bold"
-        android:textSize="18sp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="List of Activities"
+            android:fontFamily="@font/montserrat_alternates_semi_bold"
+            android:textSize="18sp"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_teacher_add_activity"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/icon_plus"
+            />
+    </RelativeLayout>
 
     <ListView
         android:layout_width="wrap_content"

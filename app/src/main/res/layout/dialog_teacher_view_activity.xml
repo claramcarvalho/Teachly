@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Activity 1"
+            android:hint="Name"
             android:padding="10dp"
             app:boxStrokeColor="@color/gray"
             android:fontFamily="@font/montserrat_alternates_semi_bold"
@@ -51,7 +51,7 @@
             android:lines="5"
             android:padding="10dp"
             android:gravity="start"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec."
+            android:hint="Description..."
             app:boxStrokeColor="@color/gray"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -98,6 +98,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/btnSaveActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -108,6 +109,7 @@
         android:textSize="20dp"
         app:drawableStartCompat="@drawable/icon_check_30" />
     <TextView
+        android:id="@+id/btnDeleteActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableStartCompat="@drawable/icon_cross_mark_30"

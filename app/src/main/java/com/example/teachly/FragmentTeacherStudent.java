@@ -2,11 +2,20 @@ package com.example.teachly;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +67,11 @@ public class FragmentTeacherStudent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_student, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_teacher_student, container, false);
+        ListView listOfActivities = rootView.findViewById(R.id.listOfStudents);
+        String[] names = {"Paul Robert", "John Jones", "Mary Green", "Laura Brown"};
+        CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),names);
+        listOfActivities.setAdapter(adapter);
+        return rootView;
     }
 }

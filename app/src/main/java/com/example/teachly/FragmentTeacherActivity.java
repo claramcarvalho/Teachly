@@ -2,19 +2,30 @@ package com.example.teachly;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentTeacherActivity#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentTeacherActivity extends Fragment {
+public class FragmentTeacherActivity extends Fragment implements AdapterView.OnItemSelectedListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,7 +80,61 @@ public class FragmentTeacherActivity extends Fragment {
         CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
         listOfActivities.setAdapter(adapter);
 
-        // Inflate the layout for this fragment
+        ImageButton btnAdd = rootView.findViewById(R.id.btn_teacher_add_activity);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View dialogView = inflater.inflate(R.layout.dialog_teacher_view_activity, null);
+
+                Spinner spinner = dialogView.findViewById(R.id.spinnerActivityType);
+                List<String> categories = new ArrayList<String>();
+                categories.add("Homework");
+                categories.add("Exam");
+                categories.add("Trip");
+                categories.add("Extra class");
+                categories.add("Book to read");
+                ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
+                adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapterSpinner);
+                spinner.setOnItemSelectedListener(FragmentTeacherActivity.this);
+
+                TextView date = dialogView.findViewById(R.id.edtActivityDate);
+                TextView hour = dialogView.findViewById(R.id.edtActivityTime);
+
+                date.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomAdapterListOfActivities.showDatePickerDialog(date);
+                    }
+                });
+
+                hour.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomAdapterListOfActivities.showTimePickerDialog(hour);
+                    }
+                });
+
+                TextView btnDelete = dialogView.findViewById(R.id.btnDeleteActivity);
+                btnDelete.setVisibility(View.GONE);
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
         return rootView;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

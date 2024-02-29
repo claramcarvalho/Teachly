@@ -31,7 +31,7 @@ import java.util.List;
 
 public class CustomAdapterListOfActivities extends BaseAdapter implements AdapterView.OnItemSelectedListener {
 
-    Context context;
+    static Context context;
     String activityName[], activityDesc[], activityDueDate[];
 
     LayoutInflater inflater;
@@ -115,6 +115,9 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     spinner.setAdapter(adapterSpinner);
                     spinner.setOnItemSelectedListener(CustomAdapterListOfActivities.this);
 
+                    spinner.setSelection(3);
+
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setView(dialogView);
                     AlertDialog dialog = builder.create();
@@ -157,7 +160,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
 
     }
 
-    public void showDatePickerDialog(View v) {
+    public static void showDatePickerDialog(View v) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -175,7 +178,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         datePickerDialog.show();
     }
 
-    public void showTimePickerDialog(View v) {
+    public static void showTimePickerDialog(View v) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
