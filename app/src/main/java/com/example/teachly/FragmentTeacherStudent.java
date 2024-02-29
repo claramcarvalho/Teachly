@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,10 +71,32 @@ public class FragmentTeacherStudent extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_teacher_student, container, false);
-        ListView listOfActivities = rootView.findViewById(R.id.listOfStudents);
+        ListView listOfStudents = rootView.findViewById(R.id.listOfStudents);
         String[] names = {"Paul Robert", "John Jones", "Mary Green", "Laura Brown"};
         CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),names);
-        listOfActivities.setAdapter(adapter);
+        listOfStudents.setAdapter(adapter);
+
+        ImageButton btnAddStudent = rootView.findViewById(R.id.btn_teacher_add_student);
+        btnAddStudent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View dialogView = inflater.inflate(R.layout.dialog_teacher_add_student, null);
+
+                TextView btnAddStudentToClass = dialogView.findViewById(R.id.btnAddStudentToClass);
+                EditText txtEmail = dialogView.findViewById(R.id.edtAddNewStudentEmail);
+                btnAddStudentToClass.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(requireContext(), "Adicionado " + txtEmail.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
         return rootView;
     }
 }

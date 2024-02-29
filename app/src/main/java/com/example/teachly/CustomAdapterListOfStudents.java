@@ -72,15 +72,30 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                 View dialogView = inflater.inflate(R.layout.dialog_teacher_view_student, null);
                 TextView name = dialogView.findViewById(R.id.studentName);
                 TextView email = dialogView.findViewById(R.id.studentEmail);
+                TextView btnTalkToStudent = dialogView.findViewById(R.id.btnTeacherTalkToStudent);
+                TextView btnRemoveStudent = dialogView.findViewById(R.id.btnTeacherRemoveStudent);
 
                 name.setText(studentNames[position]);
                 email.setText(emails[position]);
+
+                btnTalkToStudent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "Talk to " + studentNames[position], Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                btnRemoveStudent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "Remove student " + studentNames[position], Toast.LENGTH_SHORT).show();
+                    }
+                });
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
             }
         });
 

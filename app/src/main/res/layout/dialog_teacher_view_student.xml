@@ -37,6 +37,7 @@
         android:fontFamily="@font/montserrat_regular"/>
 
     <TextView
+        android:id="@+id/btnTeacherTalkToStudent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -48,6 +49,7 @@
         app:drawableStartCompat="@drawable/icons_chat_30" />
 
     <TextView
+        android:id="@+id/btnTeacherRemoveStudent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableStartCompat="@drawable/icon_cross_mark_30"
