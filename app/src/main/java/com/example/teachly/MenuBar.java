@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MenuBar {
 
     private Context context;
@@ -57,6 +59,7 @@ public class MenuBar {
                     context.startActivity(intent);
                 }
                 else if (item.getItemId() == R.id.logOff){
+                    FirebaseAuth.getInstance().signOut();
                     Toast.makeText(context, "You have logged off", Toast.LENGTH_SHORT).show();
                     SharedPreferences sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();

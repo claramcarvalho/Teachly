@@ -181,7 +181,19 @@
             android:textSize="17sp"
             app:drawableStartCompat="@drawable/icon_check_30" />
 
+        <Button
+            android:id="@+id/btnChangeEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/lightGreen"
+            android:layout_alignParentTop="false"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:text="Change your e-mail address"/>
+
         <TextView
+            android:id="@+id/btnDeleteAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

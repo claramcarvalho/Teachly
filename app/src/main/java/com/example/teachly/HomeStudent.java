@@ -36,13 +36,7 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_student);
 
-        ///////////////////////////////////////////////////////// Testando pegar info da session
         sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-        String email = sharedPreferences.getString("email", "");
-        String password = sharedPreferences.getString("password", "");
-        Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, password, Toast.LENGTH_SHORT).show();
-        //////////////////////////////////////////////////////////
 
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
@@ -51,7 +45,6 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
         CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
         listOfClasses.setAdapter(adapter);
 
-        ///////////////////////////////////////////////////////// Testando abrir modal
         btnAddClass = findViewById(R.id.btn_student_add_class);
         btnAddClass.setOnClickListener(new View.OnClickListener() {
             @Override

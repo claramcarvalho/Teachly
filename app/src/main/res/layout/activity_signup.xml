@@ -196,8 +196,16 @@
         android:textSize="18dp"
         android:backgroundTint="@color/gray"
         android:padding="15dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
         android:fontFamily="@font/montserrat_alternates_semi_bold"
         />
+
+    <Button
+        android:id="@+id/goToLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/darkGreen"
+        android:text="Do you already have an account? Login"/>
 
 </LinearLayout>

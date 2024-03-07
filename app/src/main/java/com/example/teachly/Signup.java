@@ -1,5 +1,6 @@
 package com.example.teachly;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -18,26 +21,36 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Signup extends AppCompatActivity {
 
     ToggleButton togglePassword, toggleConfirmPassword;
-    EditText edtEmail, edtPassword, edtConfirmPassword;
-    Button signup;
+    EditText edtFullName, edtEmail, edtPhone, edtPassword, edtConfirmPassword;
+    Button signup, goToLoginBtn;
     SharedPreferences sharedPreferences;
     RadioGroup accountType;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        edtFullName = findViewById(R.id.edtFullName);
         edtEmail = findViewById(R.id.edtEmail);
         togglePassword = findViewById(R.id.showPasswordToggleButton);
         toggleConfirmPassword = findViewById(R.id.showConfirmPasswordToggleButton);
+        edtPhone = findViewById(R.id.edtPhone);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         signup = findViewById(R.id.btnSignup);
         accountType = findViewById(R.id.accountType);
+        mAuth = FirebaseAuth.getInstance();
+        goToLoginBtn = findViewById(R.id.goToLogin);
 
         togglePassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -67,48 +80,90 @@ public class Signup extends AppCompatActivity {
             }
         });
 
+        goToLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Signup.this, Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ///////////////////////////////////////////////////////////////////////////// Saving email, password and account type selected on session
-                sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                String email = edtEmail.getText().toString();
-                String password = edtPassword.getText().toString();
-                editor.putString("email", email);
-                editor.putString("password", password);
-                int type = accountType.getCheckedRadioButtonId();
-                RadioButton selectedType = findViewById(type);
-                String accountSelected = selectedType.getText().toString();
-                editor.putString("type", accountSelected);
-                editor.apply();
+                registerUser();
+            }
+        });
+    }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
-                builder.setTitle("Account created");
-                builder.setMessage("Welcome to TeachLy!");
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Signup.this, Login.class);
-                        startActivity(intent);
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(Signup.this, "Cancelou", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                builder.setIcon(R.drawable.icon_check_30).setNeutralButton("OI", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.setCancelable(false);// Impede o fechamento do AlertDialog clicando fora dele
-                AlertDialog dialog = builder.create();
-                dialog.show();
+    private void registerUser(){
+        int type = accountType.getCheckedRadioButtonId();
+        RadioButton selectedType = findViewById(type);
+        String accountSelected = selectedType.getText().toString();
+        String name = edtFullName.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim();
+        String phone = edtPhone.getText().toString().trim();
+        String password = edtPassword.getText().toString().trim();
+        String confirmPassword = edtConfirmPassword.getText().toString().trim();
+
+        if(name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || phone.isEmpty()){
+            Toast.makeText(this, "All the field should be filled!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(password.length() < 8){
+            edtPassword.setError("Password must have at least 8 characters");
+            edtPassword.requestFocus();
+            return;
+        }
+        if(!password.equals(confirmPassword)){
+            edtConfirmPassword.setError("The passwords do not match");
+            edtConfirmPassword.requestFocus();
+            return;
+        }
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            edtEmail.setError("Please enter a valid email address");
+            edtEmail.requestFocus();
+            return;
+        }
+
+        if(!Patterns.PHONE.matcher(phone).matches()){
+            edtPhone.setError("Please enter a valid phone number");
+            edtPhone.requestFocus();
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    // createUser()     Criar usuario completo no real time database
+
+                    sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("type", accountSelected);
+                    editor.apply();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
+                    builder.setTitle("Account created");
+                    builder.setMessage("Welcome to Teachly!");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Signup.this, Login.class);
+                            startActivity(intent);
+                            finish();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setIcon(R.drawable.icon_check_30);
+                    builder.setCancelable(false);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Toast.makeText(Signup.this, "Failed", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
