@@ -3,6 +3,9 @@ package com.example.teachly.Classes;
 import java.time.LocalDate;
 
 public class Activity {
+
+    private static Integer sequenceId = 1;
+    private Integer activityId;
     private Class course;
     private String name;
     private String description;
@@ -13,7 +16,18 @@ public class Activity {
         // DO NOT DELETE
         //EMPTY CONSTRUCTOR FOR FIREBASE
     }
+    public Activity(Integer activityId, Class course, String name, String description, LocalDate dueDate, EnumTypeActivity type) {
+        this.activityId = activityId;
+        this.course = course;
+        this.name = name;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.type = type;
+    }
+
     public Activity(Class course, String name, String description, LocalDate dueDate, EnumTypeActivity type) {
+        this.activityId = sequenceId;
+        sequenceId++;
         this.course = course;
         this.name = name;
         this.description = description;
@@ -59,5 +73,13 @@ public class Activity {
 
     public void setType(EnumTypeActivity type) {
         this.type = type;
+    }
+
+    public Integer getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Integer activityId) {
+        this.activityId = activityId;
     }
 }

@@ -1,6 +1,9 @@
 package com.example.teachly.Classes;
 
 public class Class {
+
+    private static Integer sequenceId = 1;
+    private Integer classId;
     private String name;
     private String description;
     private User teacher;
@@ -11,7 +14,18 @@ public class Class {
         // DO NOT DELETE
         //EMPTY CONSTRUCTOR FOR FIREBASE
     }
+    public Class(Integer classId, String name, String description, User teacher, String color, EnumCategoryClass category) {
+        this.classId = classId;
+        this.name = name;
+        this.description = description;
+        this.teacher = teacher;
+        this.color = color;
+        this.category = category;
+    }
+
     public Class(String name, String description, User teacher, String color, EnumCategoryClass category) {
+        this.classId = sequenceId;
+        sequenceId++;
         this.name = name;
         this.description = description;
         this.teacher = teacher;
@@ -57,5 +71,13 @@ public class Class {
 
     public void setCategory(EnumCategoryClass category) {
         this.category = category;
+    }
+
+    public Integer getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Integer classId) {
+        this.classId = classId;
     }
 }
