@@ -4,7 +4,8 @@ import android.net.Uri;
 
 public class User {
 
-    //private String userId;
+    private static Integer sequenceId = 1;
+    private String userId;
     private String email;
     private String password;
     private String fullName;
@@ -17,12 +18,24 @@ public class User {
         //EMPTY CONSTRUCTOR FOR FIREBASE
     }
 
-    public User(String email, String password, String fullName, String phoneNumber, Uri photo, String type) {
+    public User(String userId, String email, String password, String fullName, String phoneNumber, Uri photo, String type) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.photo = photo;
+        this.type = type;
+    }
+
+    public User(String email, String password, String fullName, String phoneNumber, String type) {
+        this.userId = String.valueOf(sequenceId);
+        sequenceId++;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.photo = null;
         this.type = type;
     }
 
@@ -74,5 +87,13 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

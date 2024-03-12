@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public class StudentEnrollment {
 
+    private static Integer sequenceId = 1;
+    private Integer studentEnrollmentId;
     private User student;
     private Class course;
     private LocalDate enrollmentDate;
@@ -12,7 +14,16 @@ public class StudentEnrollment {
         // DO NOT DELETE
         //EMPTY CONSTRUCTOR FOR FIREBASE
     }
+    public StudentEnrollment(Integer studentEnrollmentId, User student, Class course, LocalDate enrollmentDate) {
+        this.studentEnrollmentId = studentEnrollmentId;
+        this.student = student;
+        this.course = course;
+        this.enrollmentDate = enrollmentDate;
+    }
+
     public StudentEnrollment(User student, Class course, LocalDate enrollmentDate) {
+        this.studentEnrollmentId = sequenceId;
+        sequenceId++;
         this.student = student;
         this.course = course;
         this.enrollmentDate = enrollmentDate;
@@ -41,4 +52,14 @@ public class StudentEnrollment {
     public void setEnrollmentDate(LocalDate enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
     }
+
+    public Integer getStudentEnrollmentId() {
+        return studentEnrollmentId;
+    }
+
+    public void setStudentEnrollmentId(Integer studentEnrollmentId) {
+        this.studentEnrollmentId = studentEnrollmentId;
+    }
+
+
 }
