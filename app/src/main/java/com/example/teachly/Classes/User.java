@@ -1,10 +1,18 @@
 package com.example.teachly.Classes;
 
 import android.net.Uri;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class User {
-
-    private static Integer sequenceId = 1;
     private String userId;
     private String email;
     private String password;
@@ -28,9 +36,17 @@ public class User {
         this.type = type;
     }
 
+    public User(String userId, String email, String password, String fullName, String phoneNumber, String type) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.photo = null;
+        this.type = type;
+    }
+
     public User(String email, String password, String fullName, String phoneNumber, String type) {
-        this.userId = String.valueOf(sequenceId);
-        sequenceId++;
         this.email = email;
         this.password = password;
         this.fullName = fullName;

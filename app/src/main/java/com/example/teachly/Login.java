@@ -27,6 +27,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
@@ -36,24 +42,13 @@ public class Login extends AppCompatActivity {
     TextView signup, loginForgetPassword;
     SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
+    FirebaseDatabase database;
+    DatabaseReference reference;
 
     @Override
     protected void onStart() {
         super.onStart();
-        sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null){
-            if (sharedPreferences.getString("type", "").equals("Student")){
-                Intent intent = new Intent(Login.this, HomeStudent.class);
-                startActivity(intent);
-                finish();
-            }
-            if (sharedPreferences.getString("type", "").equals("Teacher")){
-                Intent intent = new Intent(Login.this, HomeTeacher.class);
-                startActivity(intent);
-                finish();
-            }
-        }
+        searchUserRealtimeDatabase();
     }
 
     @Override
@@ -150,34 +145,55 @@ public class Login extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("email", email);
-                    editor.putString("password", pass);
-
-                    if (email.equals("student@teachly.com")) {
-                        editor.putString("type", "Student");
-                    }
-                    else if (email.equals("teacher@teachly.com")){
-                        editor.putString("type", "Teacher");
-                    }
-                    editor.apply();
-
-                    Toast.makeText(Login.this, "Login Success :)", Toast.LENGTH_SHORT).show();
-                    if (sharedPreferences.getString("type", "").equals("Student")){
-                        Intent intent = new Intent(Login.this, HomeStudent.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                    if (sharedPreferences.getString("type", "").equals("Teacher")){
-                        Intent intent = new Intent(Login.this, HomeTeacher.class);
-                        startActivity(intent);
-                        finish();
-                    }
+                    searchUserRealtimeDatabase();
                 } else {
                     Toast.makeText(Login.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    public void searchUserRealtimeDatabase() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser!=null) {
+            database = FirebaseDatabase.getInstance();
+            reference = database.getReference("users");
+
+            Query findUserEmail = reference.orderByChild("userId").equalTo(currentUser.getUid());
+
+            findUserEmail.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String type = snapshot.child(currentUser.getUid()).child("type").getValue(String.class);
+
+                        //setting uid as a session variable
+                        sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("uId", currentUser.getUid());
+                        editor.apply();
+
+                        if (type.equals("Student")){
+                            Intent intent = new Intent(Login.this, HomeStudent.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        if (type.equals("Teacher")){
+                            Intent intent = new Intent(Login.this, HomeTeacher.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(Login.this, "User DO NOT exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(Login.this, "Database ERROR", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
