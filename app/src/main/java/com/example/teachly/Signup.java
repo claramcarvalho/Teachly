@@ -146,10 +146,6 @@ public class Signup extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     createUser(name, email, phone, password, accountSelected);     //Criar usuario completo no real time database
-                    sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("type", accountSelected);
-                    editor.apply();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(Signup.this);
                     builder.setTitle("Account created");
@@ -178,7 +174,10 @@ public class Signup extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("users");
 
-        User user = new User(email, password, name, phone, type);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        User user = new User(currentUser.getUid(),email, password, name, phone, type);
+
         reference.child(user.getUserId()).setValue(user);
     }
 }

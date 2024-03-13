@@ -13,8 +13,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class User {
-
-    private static Integer sequenceId = 1;
     private String userId;
     private String email;
     private String password;
@@ -38,9 +36,17 @@ public class User {
         this.type = type;
     }
 
+    public User(String userId, String email, String password, String fullName, String phoneNumber, String type) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.photo = null;
+        this.type = type;
+    }
+
     public User(String email, String password, String fullName, String phoneNumber, String type) {
-        setSequenceId();
-        this.userId = String.valueOf(sequenceId);
         this.email = email;
         this.password = password;
         this.fullName = fullName;
@@ -105,28 +111,5 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public static void setSequenceId() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        //Query checkUserId = reference.orderByKey().limitToLast(1);
-        Query checkUserId = reference.child("users");
-        checkUserId.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    User last = snapshot.getValue(User.class);
-                    User.sequenceId = Integer.parseInt(last.userId)+1;
-                } else {
-                    User.sequenceId = 1;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
     }
 }

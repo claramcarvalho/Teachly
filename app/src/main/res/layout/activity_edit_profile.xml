@@ -79,13 +79,14 @@
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtEmailOnProfileEdit"
-            android:inputType="textEmailAddress"
+            android:inputType="none"
+            android:focusable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:background="@color/white"
+
             android:fontFamily="@font/montserrat_alternates_semi_bold"
             />
         <View
@@ -123,74 +124,23 @@
             android:layout_below="@id/edtTelNumberOnProfileEdit"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingStart="50dp"
-        android:paddingEnd="50dp">
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/password"
-            app:boxStrokeColor="@color/darkGreen"
-            app:hintTextColor="@color/gray"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtPasswordOnProfileEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:textSize="18sp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:background="@color/white"
-                android:fontFamily="@font/montserrat_alternates_semi_bold"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/darkGreen"
-                android:layout_below="@id/edtPasswordOnProfileEdit"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <ToggleButton
-            android:id="@+id/showPasswordToggleButtonOnProfileEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOff=""
-            android:textOn=""
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:drawableEnd="@drawable/icon_eye_30"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"/>
 
-    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/btnSaveEditProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="@string/save_account"
             android:textSize="17sp"
             app:drawableStartCompat="@drawable/icon_check_30" />
-
-        <Button
-            android:id="@+id/btnChangeEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/lightGreen"
-            android:layout_alignParentTop="false"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="10dp"
-            android:text="Change your e-mail address"/>
 
         <TextView
             android:id="@+id/btnDeleteAccount"
