@@ -83,6 +83,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Signup.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -161,7 +162,6 @@ public class Login extends AppCompatActivity {
             reference = database.getReference("users");
 
             Query findUserEmail = reference.orderByChild("userId").equalTo(currentUser.getUid());
-
             findUserEmail.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -184,11 +184,12 @@ public class Login extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         }
+
+                        Toast.makeText(Login.this, type, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(Login.this, "User DO NOT exist", Toast.LENGTH_SHORT).show();
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Toast.makeText(Login.this, "Database ERROR", Toast.LENGTH_SHORT).show();
