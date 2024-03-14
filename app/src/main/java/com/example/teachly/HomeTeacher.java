@@ -44,6 +44,9 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     TextView btnSaveNewClass;
     String selectedCategory;
 
+    User teacher;
+    String colorOfClass;
+
     String[] colors = {"#fef8a0","#ff8a84","#75a9f9"};
     String[] names = {"French Class Intermediate", "French Class Basic I", "Math With Luc"};
 
@@ -109,10 +112,14 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     }
 
     public void createClassOnDatabase (View dialogView) {
-        final User[] teacher = new User[1];
+        //Integer lastId = getLastClassIdFromFirebase();
+        getLastClassIdFromFirebase();
+/*
+        //final User[] teacher = new User[1];
+        //User teacher;
         String className = edtClassName.getText().toString().trim();
         String classDescription = edtClassDescription.getText().toString().trim();
-        final String[] colorOfClass = new String[1];
+        //final String[] colorOfClass = new String[1];
 
         /////GETTING COLOR OF CLASS
         radioGroup = dialogView.findViewById(R.id.radioGroupColorAddNewClass);
@@ -120,17 +127,16 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton radioButton = findViewById(checkedId);
-                colorOfClass[0] = radioButton.getText().toString();
-                Toast.makeText(HomeTeacher.this, colorOfClass[0], Toast.LENGTH_SHORT).show();
+                colorOfClass = radioButton.getText().toString();
+                Toast.makeText(HomeTeacher.this, colorOfClass, Toast.LENGTH_SHORT).show();
             }
         });
 
         SharedPreferences sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
         String uId = sharedPreferences.getString("uId", "");
 
-
         /////////////////////////////////////////PARAMOS AQUI//////////////////////////////////////////////////////////////
-/*
+
         /////////////finding user by id
         DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("users");
         Query findUser = databaseReferenceUsers.orderByChild("userId").equalTo(uId);
@@ -144,12 +150,8 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
                     String passwordDB = snapshot.child(uId).child("password").getValue(String.class);
                     String phoneDB = snapshot.child(uId).child("phoneNumber").getValue(String.class);
                     String typeDB = snapshot.child(uId).child("type").getValue(String.class);
-                    teacher[0] = new User(uId,emailDB,passwordDB,nameDB,phoneDB,typeDB);
-
-                    Class newClass = new Class(className,classDescription,teacher[0],colorOfClass[0],EnumCategoryClass.valueOf(selectedCategory));
-
-                    DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
-                    databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+                    //teacher[0] = new User(uId,emailDB,passwordDB,nameDB,phoneDB,typeDB);
+                    teacher = new User(uId,emailDB,passwordDB,nameDB,phoneDB,typeDB);
                 }
             }
 
@@ -158,7 +160,40 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
             }
         });
-*/
 
+        Class newClass = new Class(className,classDescription,teacher,colorOfClass,EnumCategoryClass.valueOf(selectedCategory));
+
+        DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
+        databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+        */
+    }
+
+    public void getLastClassIdFromFirebase() {
+        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
+        Query findClasses = databaseReferenceUsers.orderByChild("classId");
+
+        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    ArrayList<Long> classIds = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        // Obtém o valor do atributo "classId" de cada nó e adiciona à lista
+                        Long classId = classSnapshot.child("classId").getValue(Long.class);
+                        classIds.add(classId);
+                    }
+
+                    for (Long id: classIds) {
+                        System.out.println(id);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
