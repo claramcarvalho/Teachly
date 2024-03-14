@@ -133,11 +133,7 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
 
     public static void loadAllClassesInList(Context context, ArrayList<Class> classes){
-        for (Class item : classes){
-            System.out.println("Chegou aqui " + item.getName());
-        }
-
-        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(context,classes);
+        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(context,classes, "Teacher");
         listOfClasses.setAdapter(adapter);
     }
 

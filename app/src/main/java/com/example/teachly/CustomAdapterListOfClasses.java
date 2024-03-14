@@ -24,11 +24,13 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
 
     Context context;
     ArrayList<Class> classesReceived = new ArrayList<>();
+    String typeUser;
     LayoutInflater inflater;
 
-    public CustomAdapterListOfClasses (Context appContext, ArrayList<Class> classes) {
+    public CustomAdapterListOfClasses (Context appContext, ArrayList<Class> classes, String type) {
         context = appContext;
         this.classesReceived = classes;
+        this.typeUser = type;
         inflater = LayoutInflater.from(appContext);
     }
     @Override
@@ -57,36 +59,36 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
         Class classItem = classesReceived.get(position);
         String shapeColor = classItem.getColor();
         String nameClass = classItem.getName();
-        String numberOfStudents = "0";
+
+        Integer numberOfStudents = classItem.getListOfStudents().size();
+        System.out.println(numberOfStudents);
 
         shape.setColorFilter(Color.parseColor(shapeColor), PorterDuff.Mode.SRC_IN);
         name.setText(nameClass);
-        nbStudents.setText(numberOfStudents);
+        nbStudents.setText(String.valueOf(numberOfStudents) + " Students");
 
-        /*item.setOnClickListener(new View.OnClickListener() {
+        item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ///////////////////////////////////////// Testing the type of the user
-                SharedPreferences sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-                String typeUser = sharedPreferences.getString("type", "");
                 if (typeUser.equals("Teacher")){
                     Intent intent = new Intent(context,ClassPageTeacher.class);
-                    intent.putExtra("className", className[position]);
-                    intent.putExtra("classColor", shapeColor[position]);
+                    intent.putExtra("classId", classItem.getClassId());
+                    intent.putExtra("className", nameClass);
+                    intent.putExtra("classColor", shapeColor);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
-                if (typeUser.equals("Student")){
+     /*           if (typeUser.equals("Student")){
                     Intent intent = new Intent(context,ClassPageStudent.class);
                     intent.putExtra("className", className[position]);
                     intent.putExtra("classColor", shapeColor[position]);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
-                }
+                }*/
 
 
             }
-        });*/
+        });
         return convertView;
     }
 }

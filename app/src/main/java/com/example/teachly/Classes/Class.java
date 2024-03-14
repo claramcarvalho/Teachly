@@ -13,6 +13,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Class {
@@ -23,6 +24,7 @@ public class Class {
     private String color;
     private EnumCategoryClass category;
 
+    private ArrayList<String> listOfStudents = new ArrayList<String>();
 
     public Class() {
         // DO NOT DELETE
@@ -89,6 +91,14 @@ public class Class {
         return classId;
     }
 
+    public ArrayList<String> getListOfStudents() {
+        return listOfStudents;
+    }
+
+    public void setListOfStudents(ArrayList<String> listOfStudents) {
+        this.listOfStudents = listOfStudents;
+    }
+
     public static void createClassOnDatabase(Context context, String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
         DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
         Query findClasses = databaseReferenceUsers.orderByChild("classId");
@@ -109,7 +119,6 @@ public class Class {
 
 
                     Class newClass = new Class(String.valueOf(sequenceId +1), className,classDescription, uId, colorOfClass,category);
-
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
 

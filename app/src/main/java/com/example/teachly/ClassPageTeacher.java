@@ -19,6 +19,8 @@ public class ClassPageTeacher extends AppCompatActivity {
     ViewPager2 viewPagerTeacher;
     ImageView classShape, editClass;
     TextView className;
+
+    String classId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,7 @@ public class ClassPageTeacher extends AppCompatActivity {
         classShape = findViewById(R.id.classShape);
         className = findViewById(R.id.classTitle);
 
+        classId = getIntent().getStringExtra("classId");
         className.setText(getIntent().getStringExtra("className"));
         classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
 
