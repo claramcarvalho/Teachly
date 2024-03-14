@@ -23,7 +23,6 @@ public class Class {
     private String color;
     private EnumCategoryClass category;
 
-    public static ArrayList<Class> listOfClasses;
 
     public Class() {
         // DO NOT DELETE
@@ -90,7 +89,7 @@ public class Class {
         return classId;
     }
 
-    public static void createClassOnDatabase(String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
+    public static void createClassOnDatabase(Context context, String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
         DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
         Query findClasses = databaseReferenceUsers.orderByChild("classId");
 
@@ -114,14 +113,14 @@ public class Class {
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
 
-                    HomeTeacher.loadAllClassesByTeacherUId();
+                    Class.loadAllClassesByTeacherUId(context, uId);
                 }
                 else {
                     Class newClass = new Class("1", className,classDescription, uId, colorOfClass,category);
 
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
-                    HomeTeacher.loadAllClassesByTeacherUId();
+                    Class.loadAllClassesByTeacherUId(context, uId);
                 }
             }
 
@@ -129,6 +128,37 @@ public class Class {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    public static void loadAllClassesByTeacherUId(Context context, String uId) {
+        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
+        Query findClasses = databaseReferenceUsers.orderByChild("teacherUId").equalTo(uId);
+
+        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    ArrayList<Class> listOfClasses = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        String classId = classSnapshot.child("classId").getValue(String.class);
+                        String className = classSnapshot.child("name").getValue(String.class);
+                        String classDesc = classSnapshot.child("description").getValue(String.class);
+                        String category = classSnapshot.child("category").getValue(String.class);
+                        String color = classSnapshot.child("color").getValue(String.class);
+
+                        Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
+                        listOfClasses.add(newClass);
+                    }
+                    HomeTeacher.loadAllClassesInList(context, listOfClasses);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 

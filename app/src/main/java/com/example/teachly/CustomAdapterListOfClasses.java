@@ -16,23 +16,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Class;
+
+import java.util.ArrayList;
+
 public class CustomAdapterListOfClasses extends BaseAdapter {
 
     Context context;
-    String shapeColor[], className[], numberOfStudents[];
-
+    ArrayList<Class> classesReceived = new ArrayList<>();
     LayoutInflater inflater;
 
-    public CustomAdapterListOfClasses (Context appContext, String[] shapeColor, String[] className, String[] numberOfStudents) {
+    public CustomAdapterListOfClasses (Context appContext, ArrayList<Class> classes) {
         context = appContext;
-        this.shapeColor = shapeColor;
-        this.className = className;
-        this.numberOfStudents = numberOfStudents;
+        this.classesReceived = classes;
         inflater = LayoutInflater.from(appContext);
     }
     @Override
     public int getCount() {
-        return className.length;
+        return classesReceived.size();
     }
 
     @Override
@@ -53,11 +54,16 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
         TextView nbStudents = convertView.findViewById(R.id.textNumberOfStudents);
         RelativeLayout item = convertView.findViewById(R.id.btnGoCheckClass);
 
-        shape.setColorFilter(Color.parseColor(shapeColor[position]), PorterDuff.Mode.SRC_IN);
-        name.setText(this.className[position]);
-        nbStudents.setText(this.numberOfStudents[position]);
+        Class classItem = classesReceived.get(position);
+        String shapeColor = classItem.getColor();
+        String nameClass = classItem.getName();
+        String numberOfStudents = "0";
 
-        item.setOnClickListener(new View.OnClickListener() {
+        shape.setColorFilter(Color.parseColor(shapeColor), PorterDuff.Mode.SRC_IN);
+        name.setText(nameClass);
+        nbStudents.setText(numberOfStudents);
+
+        /*item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ///////////////////////////////////////// Testing the type of the user
@@ -80,7 +86,7 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
 
 
             }
-        });
+        });*/
         return convertView;
     }
 }

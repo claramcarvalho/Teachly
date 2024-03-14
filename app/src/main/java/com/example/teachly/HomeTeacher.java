@@ -37,16 +37,13 @@ import java.util.List;
 
 public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    ListView listOfClasses;
+    static ListView listOfClasses;
     ImageButton btnAdd;
     EditText edtClassName, edtClassDescription;
     Spinner spinner;
     RadioGroup radioGroup;
     TextView btnSaveNewClass;
     String selectedCategory;
-
-    ArrayList<Class> listAllClasses = new ArrayList<>();
-
     User teacher;
     String colorOfClass;
 
@@ -69,11 +66,10 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
 
-        loadAllClassesByTeacherUId();
+        Class.loadAllClassesByTeacherUId(getApplicationContext(), uId);
 
         listOfClasses = findViewById(R.id.listOfClassTeacher);
-        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
-        listOfClasses.setAdapter(adapter);
+
 
         btnAdd = findViewById(R.id.btn_teacher_add_class);
 
@@ -125,40 +121,6 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
-    public static void loadAllClassesByTeacherUId() {
-        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
-        Query findClasses = databaseReferenceUsers.orderByChild("teacherUId").equalTo(uId);
-
-        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    ArrayList<Class> listOfClasses = new ArrayList<>();
-                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
-                        String classId = classSnapshot.child("classId").getValue(String.class);
-                        String className = classSnapshot.child("name").getValue(String.class);
-                        String classDesc = classSnapshot.child("description").getValue(String.class);
-                        String category = classSnapshot.child("category").getValue(String.class);
-                        String color = classSnapshot.child("color").getValue(String.class);
-
-                        Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
-                        listOfClasses.add(newClass);
-                    }
-                    for (Class item : listOfClasses){
-                        System.out.println(item.getName());
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         selectedCategory = parent.getItemAtPosition(position).toString();
@@ -167,6 +129,16 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+
+    public static void loadAllClassesInList(Context context, ArrayList<Class> classes){
+        for (Class item : classes){
+            System.out.println("Chegou aqui " + item.getName());
+        }
+
+        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(context,classes);
+        listOfClasses.setAdapter(adapter);
     }
 
     public void createClassOnDatabase (AlertDialog dialog, String colorOfClass) {
@@ -185,7 +157,7 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
         }
 
         try {
-            Class.createClassOnDatabase(className, classDescription, uId, colorOfClass, EnumCategoryClass.valueOf(selectedCategory));
+            Class.createClassOnDatabase(getApplicationContext(), className, classDescription, uId, colorOfClass, EnumCategoryClass.valueOf(selectedCategory));
             Toast.makeText(HomeTeacher.this, "Class " + className + " was successfully created", Toast.LENGTH_SHORT).show();
 
 

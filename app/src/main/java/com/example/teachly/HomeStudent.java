@@ -41,9 +41,9 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
 
-        listOfClasses = findViewById(R.id.listOfClassStudent);
+       /* listOfClasses = findViewById(R.id.listOfClassStudent);
         CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
-        listOfClasses.setAdapter(adapter);
+        listOfClasses.setAdapter(adapter);*/
 
         btnAddClass = findViewById(R.id.btn_student_add_class);
         btnAddClass.setOnClickListener(new View.OnClickListener() {
