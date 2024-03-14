@@ -1,12 +1,23 @@
 package com.example.teachly.Classes;
 
-public class Class {
+import androidx.annotation.NonNull;
 
-    private static Integer sequenceId = 1;
-    private Integer classId;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+public class Class {
+    private String classId;
     private String name;
     private String description;
-    private User teacher;
+    private String teacher;
     private String color;
     private EnumCategoryClass category;
 
@@ -14,7 +25,7 @@ public class Class {
         // DO NOT DELETE
         //EMPTY CONSTRUCTOR FOR FIREBASE
     }
-    public Class(Integer classId, String name, String description, User teacher, String color, EnumCategoryClass category) {
+    public Class(String classId, String name, String description, String teacher, String color, EnumCategoryClass category) {
         this.classId = classId;
         this.name = name;
         this.description = description;
@@ -23,9 +34,7 @@ public class Class {
         this.category = category;
     }
 
-    public Class(String name, String description, User teacher, String color, EnumCategoryClass category) {
-        this.classId = sequenceId;
-        sequenceId++;
+    public Class(String name, String description, String teacher, String color, EnumCategoryClass category) {
         this.name = name;
         this.description = description;
         this.teacher = teacher;
@@ -49,11 +58,11 @@ public class Class {
         this.description = description;
     }
 
-    public User getTeacher() {
+    public String getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(User teacher) {
+    public void setTeacher(String teacher) {
         this.teacher = teacher;
     }
 
@@ -73,11 +82,47 @@ public class Class {
         this.category = category;
     }
 
-    public Integer getClassId() {
+    public String getClassId() {
         return classId;
     }
 
-    public void setClassId(Integer classId) {
-        this.classId = classId;
+    public static void createClassOnDatabase(String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
+        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
+        Query findClasses = databaseReferenceUsers.orderByChild("classId");
+
+        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int sequenceId = 0;
+                if (snapshot.exists()) {
+                    ArrayList<Integer> classIds = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        String classId = classSnapshot.child("classId").getValue(String.class);
+                        Integer classIdInt = Integer.parseInt(classId);
+                        classIds.add(classIdInt);
+                    }
+
+                    sequenceId = Collections.max(classIds);
+
+
+                    Class newClass = new Class(String.valueOf(sequenceId +1), className,classDescription, uId, colorOfClass,category);
+
+                    DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
+                    databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+
+                }
+                else {
+                    Class newClass = new Class("1", className,classDescription, uId, colorOfClass,category);
+
+                    DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
+                    databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
+
 }

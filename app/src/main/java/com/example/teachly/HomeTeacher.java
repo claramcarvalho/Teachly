@@ -81,6 +81,20 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
                 radioGroup = dialogView.findViewById(R.id.radioGroupColorAddNewClass);
                 btnSaveNewClass = dialogView.findViewById(R.id.btnSaveNewClassTeacher);
 
+
+                int idBtn =  radioGroup.getCheckedRadioButtonId();
+                RadioButton radioButton = dialogView.findViewById(idBtn);
+
+                colorOfClass = radioButton.getText().toString();
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        RadioButton radioButton = group.findViewById(checkedId);
+                        System.out.println(radioButton);
+                        colorOfClass = radioButton.getText().toString();
+                    }
+                });
+
                 List<String> categories = new ArrayList<String>();
                 for (EnumCategoryClass value : EnumCategoryClass.values()){
                     categories.add(value.name());
@@ -93,7 +107,7 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
                 btnSaveNewClass.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        createClassOnDatabase(dialogView);
+                        createClassOnDatabase(dialogView, colorOfClass);
                     }
                 });
             }
@@ -111,89 +125,20 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
-    public void createClassOnDatabase (View dialogView) {
-        //Integer lastId = getLastClassIdFromFirebase();
-        getLastClassIdFromFirebase();
-/*
-        //final User[] teacher = new User[1];
-        //User teacher;
+    public void createClassOnDatabase (View dialogView, String colorOfClass) {
+
         String className = edtClassName.getText().toString().trim();
         String classDescription = edtClassDescription.getText().toString().trim();
-        //final String[] colorOfClass = new String[1];
 
         /////GETTING COLOR OF CLASS
-        radioGroup = dialogView.findViewById(R.id.radioGroupColorAddNewClass);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = findViewById(checkedId);
-                colorOfClass = radioButton.getText().toString();
-                Toast.makeText(HomeTeacher.this, colorOfClass, Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         SharedPreferences sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
         String uId = sharedPreferences.getString("uId", "");
 
-        /////////////////////////////////////////PARAMOS AQUI//////////////////////////////////////////////////////////////
+        Class.createClassOnDatabase(className, classDescription, uId, colorOfClass, EnumCategoryClass.valueOf(selectedCategory));
 
-        /////////////finding user by id
-        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("users");
-        Query findUser = databaseReferenceUsers.orderByChild("userId").equalTo(uId);
 
-        findUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String nameDB = snapshot.child(uId).child("fullName").getValue(String.class);
-                    String emailDB = snapshot.child(uId).child("email").getValue(String.class);
-                    String passwordDB = snapshot.child(uId).child("password").getValue(String.class);
-                    String phoneDB = snapshot.child(uId).child("phoneNumber").getValue(String.class);
-                    String typeDB = snapshot.child(uId).child("type").getValue(String.class);
-                    //teacher[0] = new User(uId,emailDB,passwordDB,nameDB,phoneDB,typeDB);
-                    teacher = new User(uId,emailDB,passwordDB,nameDB,phoneDB,typeDB);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        Class newClass = new Class(className,classDescription,teacher,colorOfClass,EnumCategoryClass.valueOf(selectedCategory));
-
-        DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
-        databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
-        */
     }
 
-    public void getLastClassIdFromFirebase() {
-        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
-        Query findClasses = databaseReferenceUsers.orderByChild("classId");
-
-        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    ArrayList<Long> classIds = new ArrayList<>();
-                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
-                        // Obtém o valor do atributo "classId" de cada nó e adiciona à lista
-                        Long classId = classSnapshot.child("classId").getValue(Long.class);
-                        classIds.add(classId);
-                    }
-
-                    for (Long id: classIds) {
-                        System.out.println(id);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 }
