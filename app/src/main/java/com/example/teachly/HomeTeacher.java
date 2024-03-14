@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Activity;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
 import com.example.teachly.Classes.User;
@@ -44,6 +45,8 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     TextView btnSaveNewClass;
     String selectedCategory;
 
+    ArrayList<Class> listAllClasses = new ArrayList<>();
+
     User teacher;
     String colorOfClass;
 
@@ -52,13 +55,21 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
     String[] nbStu = {"5 students", "4 students", "7 students"};
 
+    SharedPreferences sharedPreferences;
+    static String uId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_teacher);
 
+        sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        uId = sharedPreferences.getString("uId", "");
+
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
+
+        loadAllClassesByTeacherUId();
 
         listOfClasses = findViewById(R.id.listOfClassTeacher);
         CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
@@ -90,7 +101,6 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         RadioButton radioButton = group.findViewById(checkedId);
-                        System.out.println(radioButton);
                         colorOfClass = radioButton.getText().toString();
                     }
                 });
@@ -107,9 +117,43 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
                 btnSaveNewClass.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        createClassOnDatabase(dialogView, colorOfClass);
+                        createClassOnDatabase(dialog, colorOfClass);
                     }
                 });
+            }
+        });
+
+    }
+
+    public static void loadAllClassesByTeacherUId() {
+        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
+        Query findClasses = databaseReferenceUsers.orderByChild("teacherUId").equalTo(uId);
+
+        findClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    ArrayList<Class> listOfClasses = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        String classId = classSnapshot.child("classId").getValue(String.class);
+                        String className = classSnapshot.child("name").getValue(String.class);
+                        String classDesc = classSnapshot.child("description").getValue(String.class);
+                        String category = classSnapshot.child("category").getValue(String.class);
+                        String color = classSnapshot.child("color").getValue(String.class);
+
+                        Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
+                        listOfClasses.add(newClass);
+                    }
+                    for (Class item : listOfClasses){
+                        System.out.println(item.getName());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
@@ -125,19 +169,33 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
-    public void createClassOnDatabase (View dialogView, String colorOfClass) {
+    public void createClassOnDatabase (AlertDialog dialog, String colorOfClass) {
 
         String className = edtClassName.getText().toString().trim();
         String classDescription = edtClassDescription.getText().toString().trim();
 
-        /////GETTING COLOR OF CLASS
+        if (className.isEmpty()){
+            Toast.makeText(this, "Please enter a name for the class", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (classDescription.isEmpty()){
+            Toast.makeText(this, "Please enter a description for the class", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Class.createClassOnDatabase(className, classDescription, uId, colorOfClass, EnumCategoryClass.valueOf(selectedCategory));
+            Toast.makeText(HomeTeacher.this, "Class " + className + " was successfully created", Toast.LENGTH_SHORT).show();
 
 
-        SharedPreferences sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-        String uId = sharedPreferences.getString("uId", "");
-
-        Class.createClassOnDatabase(className, classDescription, uId, colorOfClass, EnumCategoryClass.valueOf(selectedCategory));
-
+        }
+        catch (Exception ex){
+            Toast.makeText(HomeTeacher.this, "Class was not created, try again!", Toast.LENGTH_SHORT).show();
+        }
+        finally {
+            dialog.dismiss();
+        }
 
     }
 

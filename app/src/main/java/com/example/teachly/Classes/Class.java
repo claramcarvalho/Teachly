@@ -1,7 +1,10 @@
 package com.example.teachly.Classes;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
+import com.example.teachly.HomeTeacher;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -10,16 +13,17 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class Class {
     private String classId;
     private String name;
     private String description;
-    private String teacher;
+    private String teacherUId;
     private String color;
     private EnumCategoryClass category;
+
+    public static ArrayList<Class> listOfClasses;
 
     public Class() {
         // DO NOT DELETE
@@ -29,7 +33,7 @@ public class Class {
         this.classId = classId;
         this.name = name;
         this.description = description;
-        this.teacher = teacher;
+        this.teacherUId = teacher;
         this.color = color;
         this.category = category;
     }
@@ -37,7 +41,7 @@ public class Class {
     public Class(String name, String description, String teacher, String color, EnumCategoryClass category) {
         this.name = name;
         this.description = description;
-        this.teacher = teacher;
+        this.teacherUId = teacher;
         this.color = color;
         this.category = category;
     }
@@ -58,12 +62,12 @@ public class Class {
         this.description = description;
     }
 
-    public String getTeacher() {
-        return teacher;
+    public String getTeacherUId() {
+        return teacherUId;
     }
 
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
+    public void setTeacherUId(String teacherUId) {
+        this.teacherUId = teacherUId;
     }
 
     public String getColor() {
@@ -110,12 +114,14 @@ public class Class {
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
 
+                    HomeTeacher.loadAllClassesByTeacherUId();
                 }
                 else {
                     Class newClass = new Class("1", className,classDescription, uId, colorOfClass,category);
 
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+                    HomeTeacher.loadAllClassesByTeacherUId();
                 }
             }
 
@@ -124,5 +130,6 @@ public class Class {
             }
         });
     }
+
 
 }
