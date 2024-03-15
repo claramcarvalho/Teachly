@@ -169,6 +169,7 @@
     </RadioGroup>
 
     <TextView
+        android:id="@+id/btnSaveClassOnEditClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -179,6 +180,7 @@
         android:textSize="20dp"
         app:drawableStartCompat="@drawable/icon_check_30" />
     <TextView
+        android:id="@+id/btnDeleteClassOnEditClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

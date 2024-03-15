@@ -74,6 +74,8 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
                     Intent intent = new Intent(context,ClassPageTeacher.class);
                     intent.putExtra("classId", classItem.getClassId());
                     intent.putExtra("className", nameClass);
+                    intent.putExtra("classDescription", classItem.getDescription());
+                    intent.putExtra("classCategory", classItem.getCategory().name());
                     intent.putExtra("classColor", shapeColor);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);

@@ -1,5 +1,6 @@
 package com.example.teachly;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,11 +10,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.EnumCategoryClass;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +30,7 @@ import java.util.List;
 public class HomeStudent extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ListView listOfClasses;
+    ListView listOfClassesSearchListView;
 
     String[] colors = {"#fef8a0","#ff8a84","#75a9f9"};
     String[] names = {"French Class Intermediate", "French Class Basic I", "Math With Luc"};
@@ -31,10 +41,17 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
 
     ImageButton btnAddClass;
 
+    FirebaseDatabase database;
+    DatabaseReference referenceTeachers, referenceClasses;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_student);
+
+        database = FirebaseDatabase.getInstance();
+        referenceTeachers = database.getReference("users");
+        referenceClasses = database.getReference("classes");
 
         sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
 
@@ -56,27 +73,20 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
+                listOfClassesSearchListView = dialogView.findViewById(R.id.listTutors);
                 Spinner spinner = dialogView.findViewById(R.id.spinnerStudentSearchCategory);
                 List<String> categories = new ArrayList<String>();
-                categories.add("French");
-                categories.add("Math");
-                categories.add("Tefaq");
-                categories.add("C#");
-                categories.add("IELTS");
+                categories.add("ALL CATEGORIES");
+                for (EnumCategoryClass value : EnumCategoryClass.values()){
+                    categories.add(value.name());
+                }
                 ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(HomeStudent.this, android.R.layout.simple_spinner_item, categories);
                 adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapterSpinner);
                 spinner.setOnItemSelectedListener(HomeStudent.this);
+                spinner.setSelection(0);
 
-
-                String[] photos = {"#fef8a0","#ff8a84","#75a9f9","#ff8a84","#75a9f9"};
-                String[] names = {"Fulano Ciclano","Fulano Ciclano","Fulano Ciclano","Fulano Ciclano","Fulano Ciclano"};
-                String[] emails = {"tutor1@gmail.com","tutor11111111111@gmail.com","tutor1@gmail.com", "tutor133445455665@gmail.com", "tutor1@gmail.com"};
-                String[] phones = {"4567896325", "4567896325","4567896325","4567896325", "4567896325"};
-                ListView listTutors = dialogView.findViewById(R.id.listTutors);
-                CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(), photos, names, emails, phones);
-                listTutors.setAdapter(adapter);
-
+                loadTeachersByCategory("ALL CATEGORIES");
             }
         });
     }
@@ -91,5 +101,40 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public void loadTeachersByCategory(String category) {
+        if (category.equals("ALL CATEGORIES")) {
+            Query findClass = referenceClasses.orderByChild("classId");
+            findClass.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        ArrayList<Class> listOfClassesSearch = new ArrayList<>();
+                        for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                            String classId = classSnapshot.child("classId").getValue(String.class);
+                            String name = classSnapshot.child("name").getValue(String.class);
+                            String description = classSnapshot.child("description").getValue(String.class);
+                            String color = classSnapshot.child("color").getValue(String.class);
+                            String category = classSnapshot.child("category").getValue(String.class);
+                            String teacherUId = classSnapshot.child("teacherUId").getValue(String.class);
+
+                            Class newClass = new Class(classId,name,description,teacherUId,color,EnumCategoryClass.valueOf(category));
+                            listOfClassesSearch.add(newClass);
+                        }
+
+                        CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(),listOfClassesSearch);
+                        listOfClassesSearchListView.setAdapter(adapter);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+
+        }
     }
 }

@@ -47,11 +47,6 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     User teacher;
     String colorOfClass;
 
-    String[] colors = {"#fef8a0","#ff8a84","#75a9f9"};
-    String[] names = {"French Class Intermediate", "French Class Basic I", "Math With Luc"};
-
-    String[] nbStu = {"5 students", "4 students", "7 students"};
-
     SharedPreferences sharedPreferences;
     static String uId;
 

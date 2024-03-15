@@ -34,6 +34,8 @@ public class ClassPageTeacher extends AppCompatActivity {
 
         classId = getIntent().getStringExtra("classId");
         className.setText(getIntent().getStringExtra("className"));
+        String classDescription = getIntent().getStringExtra("classDescription");
+        String classCategory = getIntent().getStringExtra("classCategory");
         classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
 
         editClass = findViewById(R.id.editClass);
@@ -42,7 +44,10 @@ public class ClassPageTeacher extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ClassPageTeacher.this, EditClass.class);
+                intent.putExtra("editClassId", classId);
                 intent.putExtra("editClassName", className.getText());
+                intent.putExtra("editClassDescription", classDescription);
+                intent.putExtra("editClassCategory", classCategory);
                 intent.putExtra("editClassColor", getIntent().getStringExtra("classColor"));
                 startActivity(intent);
             }

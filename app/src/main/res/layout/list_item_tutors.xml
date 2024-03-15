@@ -10,26 +10,49 @@
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/icon_circle_40"
-            android:id="@+id/photoTutorListView"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/txtClassNameListView"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/montserrat_alternates_extra_bold"
+                    android:layout_gravity="center_vertical"
+                    android:text="Class 1"
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_alignParentStart="true"/>
+                <TextView
+                    android:id="@+id/txtClassTypeListView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:gravity="center_vertical"
+                    android:padding="4dp"
+                    android:text="MATH"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:layout_alignParentEnd="true"
+                    android:background="@color/darkGreen"/>
+            </RelativeLayout>
             <TextView
                 android:id="@+id/txtTutorNameListView"
-                android:layout_width="240dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:fontFamily="@font/montserrat_alternates_extra_bold"
-                android:layout_gravity="center_vertical"
-                android:text="Tutor 1"
-                android:textSize="16sp"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+                android:fontFamily="@font/montserrat_regular"
+                android:gravity="center_vertical"
+                android:text="Fulaninho"
+                android:textSize="14sp"/>
             <TextView
                 android:id="@+id/txtTutorEmailListView"
                 android:layout_width="wrap_content"
