@@ -5,9 +5,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.teachly.Classes.User;
+
+import java.util.ArrayList;
+
 public class ViewPagerTeacherAdapter extends FragmentStateAdapter {
-    public ViewPagerTeacherAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+    ArrayList<User> listStudents;
+    String classId;
+    public ViewPagerTeacherAdapter(@NonNull FragmentActivity fragmentActivity, ArrayList<User> listStudents, String classId) {
         super(fragmentActivity);
+        this.listStudents = listStudents;
+        this.classId = classId;
     }
 
     @NonNull
@@ -17,7 +26,7 @@ public class ViewPagerTeacherAdapter extends FragmentStateAdapter {
             case 0:
                 return new FragmentTeacherActivity();
             case 1:
-                return new FragmentTeacherStudent();
+                return new FragmentTeacherStudent(listStudents, classId);
             case 2:
                 return new FragmentTeacherChat();
         };

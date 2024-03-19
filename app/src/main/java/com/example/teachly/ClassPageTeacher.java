@@ -1,5 +1,6 @@
 package com.example.teachly;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -10,8 +11,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.teachly.Classes.User;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassPageTeacher extends AppCompatActivity {
 
@@ -55,7 +67,66 @@ public class ClassPageTeacher extends AppCompatActivity {
         tabTeacher = findViewById(R.id.tabLayoutTeacher);
         viewPagerTeacher = findViewById(R.id.viewPagerTeacher);
 
-        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this);
+        //DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        ///////////////////////////// GET ALL STUDENTS BY CLASS ID HERE
+
+        ArrayList<User> listStudents = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    List<String> studentIds = new ArrayList<>();
+                    for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
+                        String studentId = studentSnapshot.getValue(String.class);
+                        studentIds.add(studentId);
+                    }
+
+                    for (String item : studentIds){
+                        DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference("users");
+                        Query findStudents = databaseReference1.orderByChild("userId").equalTo(item);
+
+                        findStudents.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    for (DataSnapshot userSnapshot : snapshot.getChildren()){
+                                        String fullname = userSnapshot.child("fullName").getValue(String.class);
+                                        String email = userSnapshot.child("email").getValue(String.class);
+                                        String password = userSnapshot.child("password").getValue(String.class);
+                                        String phoneNumber = userSnapshot.child("phoneNumber").getValue(String.class);
+                                        String type = userSnapshot.child("type").getValue(String.class);
+                                        User newUser = new User(item, email, password, fullname, phoneNumber, type);
+
+                                        listStudents.add(newUser);
+                                    }
+                                    loadClassPageTeacher(listStudents, classId);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+                else {
+                    loadClassPageTeacher(null, classId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Tratar erros
+                System.out.println("Error: " + error.getMessage());
+            }
+        });
+    }
+
+    public void loadClassPageTeacher(ArrayList<User> listStudents, String classId){
+        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this, listStudents, classId);
         viewPagerTeacher.setAdapter(pagerTeacherAdapter);
 
         viewPagerTeacher.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

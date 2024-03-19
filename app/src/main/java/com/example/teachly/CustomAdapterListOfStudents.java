@@ -25,6 +25,9 @@ import android.app.DatePickerDialog;
 
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
+
+import com.example.teachly.Classes.User;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -33,18 +36,20 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
 
     static Context context;
     String studentNames[];
-    String[] emails = {"paulrobert@email.com", "JohnJones@gmail.com", "MaryGreen@gmail.com", "LauraBrown@gmail.com"};
-
+    ArrayList<User> listStudent;
     LayoutInflater inflater;
 
-    public CustomAdapterListOfStudents (Context appContext, String[] studentNames) {
+    public CustomAdapterListOfStudents (Context appContext, ArrayList<User> listStudent) {
         context = appContext;
-        this.studentNames = studentNames;
+        this.listStudent = listStudent;
         inflater = LayoutInflater.from(appContext);
     }
     @Override
     public int getCount() {
-        return studentNames.length;
+        if (listStudent == null){
+            return 0;
+        }
+        return listStudent.size();
     }
 
     @Override
@@ -63,7 +68,9 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
         TextView name = convertView.findViewById(R.id.txtNameStudent);
         RelativeLayout item = convertView.findViewById(R.id.btnGoCheckStudent);
 
-        name.setText(this.studentNames[position]);
+        if (listStudent != null){
+            name.setText(this.listStudent.get(position).getFullName());
+        }
 
         item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,8 +82,8 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                 TextView btnTalkToStudent = dialogView.findViewById(R.id.btnTeacherTalkToStudent);
                 TextView btnRemoveStudent = dialogView.findViewById(R.id.btnTeacherRemoveStudent);
 
-                name.setText(studentNames[position]);
-                email.setText(emails[position]);
+                name.setText(listStudent.get(position).getFullName());
+                email.setText(listStudent.get(position).getEmail());
 
                 btnTalkToStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
