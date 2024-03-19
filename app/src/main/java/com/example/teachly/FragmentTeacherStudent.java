@@ -90,7 +90,7 @@ public class FragmentTeacherStudent extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_teacher_student, container, false);
         ListView listOfStudents = rootView.findViewById(R.id.listOfStudents);
-        CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),listStudent);
+        CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),listStudent, classId);
         listOfStudents.setAdapter(adapter);
 
         ImageButton btnAddStudent = rootView.findViewById(R.id.btn_teacher_add_student);
@@ -179,7 +179,7 @@ public class FragmentTeacherStudent extends Fragment {
                                                                                 newListStudents.add(newUser);
                                                                             }
                                                                             listStudent = newListStudents;
-                                                                            CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),listStudent);
+                                                                            CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),listStudent, classId);
                                                                             listOfStudents.setAdapter(adapter);
 
                                                                             dialog.dismiss();

@@ -23,10 +23,17 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.DatePickerDialog;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
 
 import com.example.teachly.Classes.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,10 +45,12 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
     String studentNames[];
     ArrayList<User> listStudent;
     LayoutInflater inflater;
+    String classId;
 
-    public CustomAdapterListOfStudents (Context appContext, ArrayList<User> listStudent) {
+    public CustomAdapterListOfStudents (Context appContext, ArrayList<User> listStudent, String classId) {
         context = appContext;
         this.listStudent = listStudent;
+        this.classId = classId;
         inflater = LayoutInflater.from(appContext);
     }
     @Override
@@ -84,6 +93,7 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
 
                 name.setText(listStudent.get(position).getFullName());
                 email.setText(listStudent.get(position).getEmail());
+                String userId = listStudent.get(position).getUserId();
 
                 btnTalkToStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -92,9 +102,37 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                     }
                 });
 
+
+                ///////// FALTA FAZER DELETE, NAO TA FUNCIONANDO ASSIM
                 btnRemoveStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
+                                        String key = studentSnapshot.getKey();
+                                        if (studentSnapshot.child(key).getValue(String.class).equals(userId)){
+                                            studentSnapshot.child(key).getRef().removeValue();
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                System.out.println("Error: " + error.getMessage());
+                            }
+                        });
+
+
+
+
+
                         Toast.makeText(context, "Remove student " + studentNames[position], Toast.LENGTH_SHORT).show();
                     }
                 });
