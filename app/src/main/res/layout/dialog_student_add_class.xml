@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search new tutors"
+        android:text="Search new classes"
         android:textSize="18dp"
         android:layout_gravity="center"
         android:fontFamily="@font/montserrat_alternates_semi_bold"/>
@@ -29,6 +29,7 @@
             android:layout_weight="1" />
 
         <Button
+            android:id="@+id/btnSearchClassStudentView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search"

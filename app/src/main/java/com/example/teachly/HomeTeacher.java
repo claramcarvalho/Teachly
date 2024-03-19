@@ -44,7 +44,6 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
     RadioGroup radioGroup;
     TextView btnSaveNewClass;
     String selectedCategory;
-    User teacher;
     String colorOfClass;
 
     SharedPreferences sharedPreferences;

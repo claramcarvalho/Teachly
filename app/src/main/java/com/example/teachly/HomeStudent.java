@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
+import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,18 +33,15 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
 
     ListView listOfClasses;
     ListView listOfClassesSearchListView;
-
-    String[] colors = {"#fef8a0","#ff8a84","#75a9f9"};
-    String[] names = {"French Class Intermediate", "French Class Basic I", "Math With Luc"};
-
-    String[] nbStu = {"5 students", "4 students", "7 students"};
-
     SharedPreferences sharedPreferences;
 
     ImageButton btnAddClass;
 
+    Button btnSearchClass;
     FirebaseDatabase database;
     DatabaseReference referenceTeachers, referenceClasses;
+
+    String selectedCourse = "ALL CATEGORIES";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +86,25 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
                 spinner.setSelection(0);
 
                 loadTeachersByCategory("ALL CATEGORIES");
+
+
+                btnSearchClass = dialogView.findViewById(R.id.btnSearchClassStudentView);
+
+                btnSearchClass.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loadTeachersByCategory(selectedCourse);
+                    }
+                });
             }
         });
+
+
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String selectedCourse = parent.getItemAtPosition(position).toString();
-        Toast.makeText(this, "The course selected is " + selectedCourse, Toast.LENGTH_SHORT).show();
-
+        selectedCourse = parent.getItemAtPosition(position).toString();
     }
 
     @Override
@@ -134,7 +143,37 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
                 }
             });
         } else {
+            Query findClass = referenceClasses.orderByChild("category").equalTo(category);
+            findClass.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        ArrayList<Class> listOfClassesSearch = new ArrayList<>();
+                        for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                            String classId = classSnapshot.child("classId").getValue(String.class);
+                            String name = classSnapshot.child("name").getValue(String.class);
+                            String description = classSnapshot.child("description").getValue(String.class);
+                            String color = classSnapshot.child("color").getValue(String.class);
+                            String category = classSnapshot.child("category").getValue(String.class);
+                            String teacherUId = classSnapshot.child("teacherUId").getValue(String.class);
 
+                            Class newClass = new Class(classId,name,description,teacherUId,color,EnumCategoryClass.valueOf(category));
+                            listOfClassesSearch.add(newClass);
+                        }
+
+                        CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(),listOfClassesSearch);
+                        listOfClassesSearchListView.setAdapter(adapter);
+                    }
+                    else {
+                        listOfClassesSearchListView.setAdapter(null);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     }
 }

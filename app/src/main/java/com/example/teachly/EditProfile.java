@@ -35,7 +35,7 @@ public class EditProfile extends AppCompatActivity {
     String fullName, phone, email, uId;
 
     FirebaseDatabase database;
-    DatabaseReference reference;
+    DatabaseReference referenceUsers, referenceClasses;
 
     SharedPreferences sharedPreferences;
 
@@ -51,7 +51,8 @@ public class EditProfile extends AppCompatActivity {
         edtEmail = findViewById(R.id.edtEmailOnProfileEdit);
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users");
+        referenceUsers = database.getReference("users");
+        referenceClasses = database.getReference("classes");
         sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
         uId = sharedPreferences.getString("uId", "");
 
@@ -75,7 +76,7 @@ public class EditProfile extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    Query findUser = reference.orderByChild("userId").equalTo(uId);
+                                    Query findUser = referenceUsers.orderByChild("userId").equalTo(uId);
 
                                     findUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -145,7 +146,7 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void showUserData () {
-        Query findUser = reference.orderByChild("userId").equalTo(uId);
+        Query findUser = referenceUsers.orderByChild("userId").equalTo(uId);
 
         findUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -170,8 +171,11 @@ public class EditProfile extends AppCompatActivity {
 
     private boolean isNameChanged (){
         if (!fullName.equals(edtFullName.getText().toString().trim())) {
-            reference.child(uId).child("fullName").setValue(edtFullName.getText().toString().trim());
+            referenceUsers.child(uId).child("fullName").setValue(edtFullName.getText().toString().trim());
             fullName = edtFullName.getText().toString().trim();
+            referenceClasses.orderByChild("teacher/userId").equalTo(uId);
+
+
             return true;
         }
         return false;
@@ -179,7 +183,7 @@ public class EditProfile extends AppCompatActivity {
 
     private boolean isPhoneChanged (){
         if (!phone.equals(edtPhone.getText().toString().trim())) {
-            reference.child(uId).child("phoneNumber").setValue(edtPhone.getText().toString().trim());
+            referenceUsers.child(uId).child("phoneNumber").setValue(edtPhone.getText().toString().trim());
             phone = edtPhone.getText().toString().trim();
             return true;
         }

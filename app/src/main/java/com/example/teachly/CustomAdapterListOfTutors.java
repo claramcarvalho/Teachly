@@ -1,17 +1,16 @@
 package com.example.teachly;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.User;
@@ -22,15 +21,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 public class CustomAdapterListOfTutors extends BaseAdapter {
 
     Context context;
     ArrayList<Class> list;
-    String nameOfTeacher, teacherEmail, teacherPhone;
     LayoutInflater inflater;
+
+    User teacher;
 
     public CustomAdapterListOfTutors (Context appContext, ArrayList<Class> list) {
         context = appContext;
@@ -52,9 +52,68 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
         return 0;
     }
 
+
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.list_item_tutors,null);
+        TextView className = convertView.findViewById(R.id.txtClassNameListView);
+        TextView classCategory = convertView.findViewById(R.id.txtClassTypeListView);
+        className.setText(this.list.get(position).getName());
+        classCategory.setText(this.list.get(position).getCategory().name());
+
+        String teacherId = this.list.get(position).getTeacherUId();
+
+
+
+        RelativeLayout layout = convertView.findViewById(R.id.btnGoCheckTutor);
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View dialogView = LayoutInflater.from(parent.getContext()).inflate(R.layout.dialog_view_teacher, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+                Query findTutor = databaseReference.orderByChild("userId").equalTo(teacherId);
+                findTutor.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                                String fullNameFound = childSnapshot.child("fullName").getValue(String.class);
+                                String emailFound = childSnapshot.child("email").getValue(String.class);
+                                String phoneFound = childSnapshot.child("phoneNumber").getValue(String.class);
+                                TextView fullname = dialogView.findViewById(R.id.nameTeacherViewTeacher);
+                                TextView email = dialogView.findViewById(R.id.emailTeacherViewTeacher);
+                                TextView phone = dialogView.findViewById(R.id.phoneTeacherViewTeacher);
+                                fullname.setText(fullNameFound);
+                                email.setText(emailFound);
+                                phone.setText(phoneFound);
+                                dialog.show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+
+
+        return convertView;
+    }
+
+
+    /*@Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        convertView = inflater.inflate(R.layout.list_item_tutors, null);
         TextView className = convertView.findViewById(R.id.txtClassNameListView);
         TextView classCategory = convertView.findViewById(R.id.txtClassTypeListView);
         TextView name = convertView.findViewById(R.id.txtTutorNameListView);
@@ -64,31 +123,44 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
         className.setText(this.list.get(position).getName());
         classCategory.setText(this.list.get(position).getCategory().name());
 
-        String teacherId = this.list.get(position).getTeacherUId();
+        User teacherId = this.list.get(position).getTeacher();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        Query findTutor = reference.orderByChild("uId").equalTo(teacherId);
+        CompletableFuture<User> teacherResult = CompletableFuture.supplyAsync(() -> {
+            try {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                Query findTutor = reference.orderByChild("userId").equalTo(teacherId);
+                User teacher = new User();
+                findTutor.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            String nameOfTeacher = snapshot.child("fullName").getValue(String.class);
+                            String teacherEmail = snapshot.child("email").getValue(String.class);
+                            String teacherPhone = snapshot.child("phoneNumber").getValue(String.class);
+                            String password = snapshot.child("password").getValue(String.class);
+                            String type = snapshot.child("type").getValue(String.class);
 
-        findTutor.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    nameOfTeacher = snapshot.child("fullName").getValue(String.class);
-                    teacherEmail = snapshot.child("email").getValue(String.class);
-                    teacherPhone = snapshot.child("phoneNumber").getValue(String.class);
+                            // Atualize as TextViews dentro do onDataChange
+                            name.setText(nameOfTeacher);
+                            email.setText(teacherEmail);
+                            phone.setText(teacherPhone);
+                        }
+                    }
 
-                    name.setText(nameOfTeacher);
-                    email.setText(teacherEmail);
-                    phone.setText(teacherPhone);
-                }
-            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Trate o cancelamento, se necessário
+                    }
+                });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+                return teacher;
+            } catch (Exception e) {
+                Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                return null;
             }
         });
 
         return convertView;
-    }
+    }*/
+
 }

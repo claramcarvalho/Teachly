@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/mediumGray">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fulaninho"
+        android:textSize="22dp"
+        android:gravity="center_horizontal"
+        android:fontFamily="@font/montserrat_alternates_bold"
+        android:id="@+id/nameTeacherViewTeacher"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="E-mail"
+        android:textSize="18dp"
+        android:fontFamily="@font/montserrat_alternates_semi_bold"
+        android:id="@+id/emailTeacherViewTeacher"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phone"
+        android:textSize="18dp"
+        android:fontFamily="@font/montserrat_alternates_semi_bold"
+        android:id="@+id/phoneTeacherViewTeacher"/>
+
+</LinearLayout>

@@ -19,7 +19,6 @@ public class ClassPageTeacher extends AppCompatActivity {
     ViewPager2 viewPagerTeacher;
     ImageView classShape, editClass;
     TextView className;
-
     String classId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
