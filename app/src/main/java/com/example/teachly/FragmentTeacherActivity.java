@@ -1,5 +1,7 @@
 package com.example.teachly;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -11,13 +13,30 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.EnumCategoryClass;
+import com.example.teachly.Classes.EnumTypeActivity;
+import com.example.teachly.Classes.User;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -36,8 +55,16 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
     private String mParam1;
     private String mParam2;
 
+    String classId, userId;
+    SharedPreferences sharedPreferences;
+    ArrayList<Activity> listActivities;
+
     public FragmentTeacherActivity() {
         // Required empty public constructor
+    }
+    public FragmentTeacherActivity(String classId, ArrayList<Activity> listActivities) {
+        this.classId = classId;
+        this.listActivities = listActivities;
     }
 
     /**
@@ -65,6 +92,8 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        sharedPreferences = getContext().getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        userId = sharedPreferences.getString("uId", "");
     }
 
     @Override
@@ -72,12 +101,8 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_teacher_activity, container, false);
 
-        String[] names = {"Exammmmm","Visit Museum","Homework"};
-        String[] descs = {"Exammmmm about conjugations", "We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions ", "Do page 43 and 45 of the book"};
-        String[] dates = {"3000/04/2024", "10/03/2024", "01/03/2024"};
-
         ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
-        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
+        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),listActivities);
         listOfActivities.setAdapter(adapter);
 
         ImageButton btnAdd = rootView.findViewById(R.id.btn_teacher_add_activity);
@@ -87,13 +112,11 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
                 View dialogView = inflater.inflate(R.layout.dialog_teacher_view_activity, null);
 
                 Spinner spinner = dialogView.findViewById(R.id.spinnerActivityType);
-                List<String> categories = new ArrayList<String>();
-                categories.add("Homework");
-                categories.add("Exam");
-                categories.add("Trip");
-                categories.add("Extra class");
-                categories.add("Book to read");
-                ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
+                List<String> typeActivities = new ArrayList<String>();
+                for (EnumTypeActivity value : EnumTypeActivity.values()){
+                    typeActivities.add(value.name());
+                }
+                ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, typeActivities);
                 adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapterSpinner);
                 spinner.setOnItemSelectedListener(FragmentTeacherActivity.this);
@@ -118,11 +141,64 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
                 TextView btnDelete = dialogView.findViewById(R.id.btnDeleteActivity);
                 btnDelete.setVisibility(View.GONE);
 
+                EditText edtName = dialogView.findViewById(R.id.edtActivityName);
+                EditText edtDescription = dialogView.findViewById(R.id.edtActivityDescription);
+                TextView btnSave = dialogView.findViewById(R.id.btnSaveActivity);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
+                btnSave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = edtName.getText().toString().trim();
+                        String desc = edtDescription.getText().toString().trim();
+                        String type = spinner.getSelectedItem().toString();
+                        String dateStr = date.getText().toString();
+                        String timeStr = hour.getText().toString();
+                        String dateTimeStr = dateStr + " " + timeStr;
+                        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+                        if (name.isEmpty()){
+                            Toast.makeText(getContext(), "Please enter a name!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (desc.isEmpty()){
+                            Toast.makeText(getContext(), "Please enter a description!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (dateStr.isEmpty() || timeStr.isEmpty()){
+                            Toast.makeText(getContext(), "Please enter date and time correctly!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        try {
+                            Date combinedDateTime = format.parse(dateTimeStr);
+                            long timestamp = combinedDateTime.getTime();
+
+                            DatabaseReference classesRef = FirebaseDatabase.getInstance().getReference("classes");
+                            DatabaseReference classRef = classesRef.child(classId);
+
+                            Activity newActivity = new Activity(name, desc, timestamp, EnumTypeActivity.valueOf(type));
+
+                            DatabaseReference newActivityRef = classRef.child("activities").push();
+                            newActivityRef.setValue(newActivity);
+
+                            Toast.makeText(getContext(), "Activity " + name + " was saved!", Toast.LENGTH_SHORT).show();
+                            Class.loadAllClassesByTeacherUId(getContext(), userId);
+
+                            listActivities.add(newActivity);
+                            adapter.notifyDataSetChanged();
+                            dialog.dismiss();
+
+                        } catch (ParseException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                });
             }
         });
         return rootView;

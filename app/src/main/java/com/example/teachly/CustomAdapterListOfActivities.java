@@ -25,27 +25,32 @@ import android.app.DatePickerDialog;
 
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
+
+import com.example.teachly.Classes.Activity;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CustomAdapterListOfActivities extends BaseAdapter implements AdapterView.OnItemSelectedListener {
 
     static Context context;
-    String activityName[], activityDesc[], activityDueDate[];
-
     LayoutInflater inflater;
+    ArrayList<Activity> listActivities;
 
-    public CustomAdapterListOfActivities (Context appContext, String[] activityName, String[] activityDesc, String[] activityDueDate) {
+    public CustomAdapterListOfActivities (Context appContext,  ArrayList<Activity> listActivities) {
         context = appContext;
-        this.activityName = activityName;
-        this.activityDesc = activityDesc;
-        this.activityDueDate = activityDueDate;
+        this.listActivities = listActivities;
         inflater = LayoutInflater.from(appContext);
     }
     @Override
     public int getCount() {
-        return activityName.length;
+        if (listActivities == null){
+            return 0;
+        }
+        return listActivities.size();
     }
 
     @Override
@@ -66,9 +71,14 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         TextView date = convertView.findViewById(R.id.textActivityDueDate);
         RelativeLayout item = convertView.findViewById(R.id.btnGoCheckActivity);
 
-        name.setText(this.activityName[position]);
-        desc.setText(this.activityDesc[position]);
-        date.setText(this.activityDueDate[position]);
+        name.setText(this.listActivities.get(position).getName());
+        desc.setText(this.listActivities.get(position).getDescription());
+        Long timestamp = this.listActivities.get(position).getDueDate();
+        Date dateReceived = new Date(timestamp);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String dateString = dateFormat.format(dateReceived);
+
+        date.setText(dateString);
 
         item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,9 +94,9 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     TextView date = dialogView.findViewById(R.id.edtActivityDate);
                     TextView hour = dialogView.findViewById(R.id.edtActivityTime);
 
-                    name.setText(activityName[position]);
-                    desc.setText(activityDesc[position]);
-                    date.setText(activityDueDate[position]);
+                    //name.setText(activityName[position]);
+                    //desc.setText(activityDesc[position]);
+                    //date.setText(activityDueDate[position]);
                     hour.setText("17:00");
 
                     date.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +133,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
-                if (typeUser.equals("Student")){
+                /*if (typeUser.equals("Student")){
                     View dialogView = inflater.inflate(R.layout.dialog_student_view_activity, null);
 
                     TextView name = dialogView.findViewById(R.id.textNameActivityStudentModal);
@@ -142,7 +152,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     builder.setView(dialogView);
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }
+                }*/
 
 
             }

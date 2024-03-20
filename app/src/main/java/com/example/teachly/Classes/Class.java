@@ -25,6 +25,8 @@ public class Class {
 
     private ArrayList<String> students = new ArrayList<String>();
 
+    private ArrayList<Activity> activities = new ArrayList<Activity>();
+
     public Class() {
         // DO NOT DELETE
         //EMPTY CONSTRUCTOR FOR FIREBASE
@@ -98,6 +100,14 @@ public class Class {
         this.students = students;
     }
 
+    public ArrayList<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(ArrayList<Activity> activities) {
+        this.activities = activities;
+    }
+
     public static void createClassOnDatabase(Context context, String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
         DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("classes");
         Query findClasses = databaseReferenceUsers.orderByChild("classId");
@@ -161,8 +171,16 @@ public class Class {
                             students.add(studentId);
                         }
 
+                        ArrayList<Activity> activities1 = new ArrayList<>();
+                        DataSnapshot activitiesSnapshot = classSnapshot.child("activities");
+                        for (DataSnapshot activitySnapshot : activitiesSnapshot.getChildren()) {
+                            Activity activity = activitySnapshot.getValue(Activity.class);
+                            activities1.add(activity);
+                        }
+
                         Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
                         newClass.setStudents(students);
+                        newClass.setActivities(activities1);
                         listOfClasses.add(newClass);
                     }
                     HomeTeacher.loadAllClassesInList(context, listOfClasses);

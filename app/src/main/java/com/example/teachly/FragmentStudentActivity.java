@@ -67,8 +67,8 @@ public class FragmentStudentActivity extends Fragment {
         String[] dates = {"30/04/2024", "10/03/2024", "01/03/2024"};
 
         ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
-        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
-        listOfActivities.setAdapter(adapter);
+        //CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
+        //listOfActivities.setAdapter(adapter);
 
         // Inflate the layout for this fragment
         return rootView;

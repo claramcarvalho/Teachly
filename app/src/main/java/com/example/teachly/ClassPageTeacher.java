@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.EnumTypeActivity;
 import com.example.teachly.Classes.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -67,10 +69,7 @@ public class ClassPageTeacher extends AppCompatActivity {
         tabTeacher = findViewById(R.id.tabLayoutTeacher);
         viewPagerTeacher = findViewById(R.id.viewPagerTeacher);
 
-        //DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-
         ///////////////////////////// GET ALL STUDENTS BY CLASS ID HERE
-
         ArrayList<User> listStudents = new ArrayList<>();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,7 +100,37 @@ public class ClassPageTeacher extends AppCompatActivity {
 
                                         listStudents.add(newUser);
                                     }
-                                    loadClassPageTeacher(listStudents, classId);
+
+
+                                    ///////////////////////////// GET ALL ACTIVITIES BY CLASS ID HERE
+                                    DatabaseReference databaseReferenceAct = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/activities");
+                                    databaseReferenceAct.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                ArrayList<Activity> activitiesList = new ArrayList<>();
+                                                for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
+                                                    String nameAct = activitySnapshot.child("name").getValue(String.class);
+                                                    String descAct = activitySnapshot.child("description").getValue(String.class);
+                                                    Long dueDateAct = activitySnapshot.child("dueDate").getValue(Long.class);
+                                                    String typeAct = activitySnapshot.child("type").getValue(String.class);
+
+                                                    Activity newActivity = new Activity(nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
+                                                    activitiesList.add(newActivity);
+                                                }
+                                                loadClassPageTeacher(listStudents, activitiesList, classId);
+                                            }
+                                            else {
+                                                loadClassPageTeacher(listStudents, null, classId);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            System.out.println("Error: " + error.getMessage());
+                                        }
+                                    });
+
                                 }
                             }
 
@@ -113,20 +142,46 @@ public class ClassPageTeacher extends AppCompatActivity {
                     }
                 }
                 else {
-                    loadClassPageTeacher(null, classId);
+                    ///////////////////////////// GET ALL ACTIVITIES BY CLASS ID HERE
+                    DatabaseReference databaseReferenceAct = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/activities");
+                    databaseReferenceAct.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                ArrayList<Activity> activitiesList = new ArrayList<Activity>();
+                                for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
+                                    String nameAct = activitySnapshot.child("name").getValue(String.class);
+                                    String descAct = activitySnapshot.child("description").getValue(String.class);
+                                    Long dueDateAct = activitySnapshot.child("dueDate").getValue(Long.class);
+                                    String typeAct = activitySnapshot.child("type").getValue(String.class);
+
+                                    Activity newActivity = new Activity(nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
+                                    activitiesList.add(newActivity);
+                                }
+                                loadClassPageTeacher(null, activitiesList, classId);
+                            }
+                            else {
+                                loadClassPageTeacher(null, null, classId);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            System.out.println("Error: " + error.getMessage());
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Tratar erros
                 System.out.println("Error: " + error.getMessage());
             }
         });
     }
 
-    public void loadClassPageTeacher(ArrayList<User> listStudents, String classId){
-        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this, listStudents, classId);
+    public void loadClassPageTeacher(ArrayList<User> listStudents, ArrayList<Activity> listActivities, String classId){
+        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this, listStudents, listActivities, classId);
         viewPagerTeacher.setAdapter(pagerTeacherAdapter);
 
         viewPagerTeacher.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
