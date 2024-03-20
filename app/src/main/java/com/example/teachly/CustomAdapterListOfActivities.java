@@ -37,11 +37,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomAdapterListOfActivities extends BaseAdapter implements AdapterView.OnItemSelectedListener {
 
@@ -49,7 +52,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
     LayoutInflater inflater;
     ArrayList<Activity> listActivities;
 
-    String activityId, classId, teacherId;
+    String classId, teacherId;
 
     SharedPreferences sharedPreferences;
 
@@ -89,13 +92,11 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         TextView date = convertView.findViewById(R.id.textActivityDueDate);
         RelativeLayout item = convertView.findViewById(R.id.btnGoCheckActivity);
 
-        activityId = this.listActivities.get(position).getId();
-
         name.setText(this.listActivities.get(position).getName());
         desc.setText(this.listActivities.get(position).getDescription());
         Long timestamp = this.listActivities.get(position).getDueDate();
         Date dateReceived = new Date(timestamp);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = dateFormat.format(dateReceived);
 
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
@@ -109,6 +110,9 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                 ///////////////////////////////////////// Testing the type of the user
                 SharedPreferences sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
                 String typeUser = sharedPreferences.getString("type", "");
+
+                String activityId = listActivities.get(position).getId();
+
                 if (typeUser.equals("Teacher")){
                     View dialogView = inflater.inflate(R.layout.dialog_teacher_view_activity, null);
 
@@ -163,6 +167,39 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     TextView btnSave = dialogView.findViewById(R.id.btnSaveActivity);
                     TextView btnDelete = dialogView.findViewById(R.id.btnDeleteActivity);
 
+                    btnSave.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/activities/"+activityId);
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        if (isActivityNameChanged(databaseReference,name.getText().toString().trim(),snapshot.child("name").getValue(String.class),position)) {
+                                            Toast.makeText(context, "Activity Name was updated!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        if (isActivityDescriptionChanged(databaseReference,desc.getText().toString().trim(),snapshot.child("description").getValue(String.class),position)) {
+                                            Toast.makeText(context, "Activity Description was updated!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        if (isActivityDateTimeChanged(databaseReference,date.getText().toString().trim(),hour.getText().toString().trim(),snapshot.child("dueDate").getValue(Long.class),position)) {
+                                            Toast.makeText(context, "Activity Date was updated!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        if (isActivityTypeChanged(databaseReference,spinner.getSelectedItem().toString(),snapshot.child("type").getValue(String.class),position)) {
+                                            Toast.makeText(context, "Activity Type was updated!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        notifyDataSetChanged();
+                                        dialog.dismiss();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    System.out.println("Error: " + error.getMessage());
+                                }
+                            });
+                        }
+                    });
+
                     btnDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -170,27 +207,23 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                    ////////// NAO TERMINAMOS DE DELETAR, TA DELETANDO O ULTIMO SEMPRE
                                     if (snapshot.exists()) {
                                         for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
                                             String id = activitySnapshot.getKey();
                                             if (id.equals(activityId)){
-                                                Toast.makeText(parent.getContext(), id, Toast.LENGTH_SHORT).show();
-
-                                                // activitySnapshot.getRef().removeValue();
+                                                activitySnapshot.getRef().removeValue();
                                             }
                                         }
-                                        //for (Activity item : listActivities){
-                                            //if (item.getId().equals(activityId)){
-                                            //    listActivities.remove(item);
-                                            //    notifyDataSetChanged();
-                                          //      Toast.makeText(parent.getContext(), "Activity " + item.getName() + " was removed!", Toast.LENGTH_SHORT).show();
-                                           //     Class.loadAllClassesByTeacherUId(parent.getContext(), teacherId);
-                                           //     dialog.dismiss();
-                                          //      return;
-                                           // }
-                                       // }
+                                        for (Activity item : listActivities){
+                                            if (item.getId().equals(activityId)){
+                                                listActivities.remove(item);
+                                                notifyDataSetChanged();
+                                                Toast.makeText(parent.getContext(), "Activity " + item.getName() + " was removed!", Toast.LENGTH_SHORT).show();
+                                                Class.loadAllClassesByTeacherUId(parent.getContext(), teacherId);
+                                                dialog.dismiss();
+                                                return;
+                                            }
+                                        }
                                     }
                                 }
 
@@ -278,6 +311,49 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         }, hour, minute, true);
 
         timePickerDialog.show();
+    }
+
+    private boolean isActivityNameChanged (DatabaseReference reference, String newName, String oldName, Integer position){
+        if (!newName.equals(oldName)) {
+            reference.child("name").setValue(newName);
+            listActivities.get(position).setName(newName);
+            return true;
+        }
+        return false;
+    }
+    private boolean isActivityDescriptionChanged (DatabaseReference reference, String newDesc, String oldDesc, Integer position){
+        if (!newDesc.equals(oldDesc)) {
+            reference.child("description").setValue(newDesc);
+            listActivities.get(position).setDescription(newDesc);
+            return true;
+        }
+        return false;
+    }
+    private boolean isActivityDateTimeChanged (DatabaseReference reference, String newDate, String newTime, Long oldDate, Integer position){
+        String dateTimeStr = newDate + " " + newTime;
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+        try {
+            Date combinedDateTime = format.parse(dateTimeStr);
+            long timestamp = combinedDateTime.getTime();
+            if (timestamp != oldDate) {
+                reference.child("dueDate").setValue(timestamp);
+                listActivities.get(position).setDueDate(timestamp);
+                return true;
+            }
+            return false;
+        } catch (ParseException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+    private boolean isActivityTypeChanged (DatabaseReference reference, String newType, String oldType, Integer position){
+        if (!newType.equals(oldType)) {
+            reference.child("type").setValue(newType);
+            listActivities.get(position).setType(EnumTypeActivity.valueOf(newType));
+            return true;
+        }
+        return false;
     }
 
 }

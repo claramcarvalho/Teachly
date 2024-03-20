@@ -31,9 +31,10 @@ import java.util.List;
 
 public class HomeStudent extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    ListView listOfClasses;
+    static ListView listOfClasses;
     ListView listOfClassesSearchListView;
     SharedPreferences sharedPreferences;
+    static String uId;
 
     ImageButton btnAddClass;
 
@@ -48,18 +49,19 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_student);
 
+        sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        uId = sharedPreferences.getString("uId", "");
+
         database = FirebaseDatabase.getInstance();
         referenceTeachers = database.getReference("users");
         referenceClasses = database.getReference("classes");
 
-        sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
-
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
 
-       /* listOfClasses = findViewById(R.id.listOfClassStudent);
-        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(getApplicationContext(),colors,names,nbStu);
-        listOfClasses.setAdapter(adapter);*/
+        Class.loadAllClassesByStudentUId(getApplicationContext(),uId);
+
+        listOfClasses = findViewById(R.id.listOfClassStudent);
 
         btnAddClass = findViewById(R.id.btn_student_add_class);
         btnAddClass.setOnClickListener(new View.OnClickListener() {
@@ -175,5 +177,10 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
                 }
             });
         }
+    }
+
+    public static void loadAllClassesInList(Context context, ArrayList<Class> classes){
+        CustomAdapterListOfClasses adapter = new CustomAdapterListOfClasses(context,classes, "Student");
+        listOfClasses.setAdapter(adapter);
     }
 }
