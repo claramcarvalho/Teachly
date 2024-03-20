@@ -23,7 +23,7 @@ public class Class {
     private String color;
     private EnumCategoryClass category;
 
-    private ArrayList<String> listOfStudents = new ArrayList<String>();
+    private ArrayList<String> students = new ArrayList<String>();
 
     public Class() {
         // DO NOT DELETE
@@ -90,12 +90,12 @@ public class Class {
         return classId;
     }
 
-    public ArrayList<String> getListOfStudents() {
-        return listOfStudents;
+    public ArrayList<String> getStudents() {
+        return students;
     }
 
-    public void setListOfStudents(ArrayList<String> listOfStudents) {
-        this.listOfStudents = listOfStudents;
+    public void setStudents(ArrayList<String> students) {
+        this.students = students;
     }
 
     public static void createClassOnDatabase(Context context, String className, String classDescription, String uId, String colorOfClass, EnumCategoryClass category) {
@@ -154,7 +154,15 @@ public class Class {
                         String category = classSnapshot.child("category").getValue(String.class);
                         String color = classSnapshot.child("color").getValue(String.class);
 
+                        ArrayList<String> students = new ArrayList<>();
+                        DataSnapshot studentsSnapshot = classSnapshot.child("students");
+                        for (DataSnapshot studentSnapshot : studentsSnapshot.getChildren()) {
+                            String studentId = studentSnapshot.getValue(String.class);
+                            students.add(studentId);
+                        }
+
                         Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
+                        newClass.setStudents(students);
                         listOfClasses.add(newClass);
                     }
                     HomeTeacher.loadAllClassesInList(context, listOfClasses);

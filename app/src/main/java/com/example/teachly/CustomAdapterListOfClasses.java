@@ -1,9 +1,8 @@
 package com.example.teachly;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,8 +58,7 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
         String shapeColor = classItem.getColor();
         String nameClass = classItem.getName();
 
-        Integer numberOfStudents = classItem.getListOfStudents().size();
-        System.out.println(numberOfStudents);
+        Integer numberOfStudents = classItem.getStudents().size();
 
         shape.setColorFilter(Color.parseColor(shapeColor), PorterDuff.Mode.SRC_IN);
         name.setText(nameClass);

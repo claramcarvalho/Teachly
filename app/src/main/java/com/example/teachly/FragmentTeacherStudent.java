@@ -1,5 +1,7 @@
 package com.example.teachly;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +49,9 @@ public class FragmentTeacherStudent extends Fragment {
     private String mParam2;
 
     ArrayList<User> listStudent;
-    String classId;
+    String classId, userId;
+
+    SharedPreferences sharedPreferences;
 
     public FragmentTeacherStudent() {
         // Required empty public constructor
@@ -83,6 +88,8 @@ public class FragmentTeacherStudent extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        sharedPreferences = getContext().getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        userId = sharedPreferences.getString("uId", "");
     }
 
     @Override
@@ -136,15 +143,20 @@ public class FragmentTeacherStudent extends Fragment {
                                                 DatabaseReference classRef = classesRef.child(classId);
 
 
-                                                for (User item : listStudent){
-                                                    if (item.getUserId().equals(uId)){
-                                                        Toast.makeText(getContext(), "This user is already in this class!", Toast.LENGTH_SHORT).show();
-                                                        return;
+                                                if (listStudent != null){
+                                                    for (User item : listStudent){
+                                                        if (item.getUserId().equals(uId)){
+                                                            Toast.makeText(getContext(), "This user is already in this class!", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        }
                                                     }
                                                 }
 
+
                                                 DatabaseReference newStudentRef = classRef.child("students").push();
                                                 newStudentRef.setValue(uId);
+
+                                                Class.loadAllClassesByTeacherUId(getContext(), userId);
 
                                                 Toast.makeText(getContext(), "Student was added to this class!", Toast.LENGTH_SHORT).show();
 

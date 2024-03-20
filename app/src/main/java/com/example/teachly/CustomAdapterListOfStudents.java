@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
 
+import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,16 +43,20 @@ import java.util.List;
 public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterView.OnItemSelectedListener {
 
     static Context context;
-    String studentNames[];
     ArrayList<User> listStudent;
     LayoutInflater inflater;
-    String classId;
+    String classId, teacherId;
+
+    SharedPreferences sharedPreferences;
 
     public CustomAdapterListOfStudents (Context appContext, ArrayList<User> listStudent, String classId) {
         context = appContext;
         this.listStudent = listStudent;
         this.classId = classId;
         inflater = LayoutInflater.from(appContext);
+
+        sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        teacherId = sharedPreferences.getString("uId", "");
     }
     @Override
     public int getCount() {
@@ -98,12 +103,15 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                 btnTalkToStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, "Talk to " + studentNames[position], Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Talk to ", Toast.LENGTH_SHORT).show();
                     }
                 });
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
-                ///////// FALTA FAZER DELETE, NAO TA FUNCIONANDO ASSIM
                 btnRemoveStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -114,9 +122,18 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
                                     for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
-                                        String key = studentSnapshot.getKey();
-                                        if (studentSnapshot.child(key).getValue(String.class).equals(userId)){
-                                            studentSnapshot.child(key).getRef().removeValue();
+                                        String uId = studentSnapshot.getValue(String.class);
+                                        if (uId.equals(userId)){
+                                            studentSnapshot.getRef().removeValue();
+                                        }
+                                    }
+                                    for (User item : listStudent){
+                                        if (item.getUserId().equals(userId)){
+                                            listStudent.remove(item);
+                                            notifyDataSetChanged();
+                                            Toast.makeText(parent.getContext(), "Student " + item.getFullName() + " was removed!", Toast.LENGTH_SHORT).show();
+                                            Class.loadAllClassesByTeacherUId(parent.getContext(), teacherId);
+                                            dialog.dismiss();
                                             return;
                                         }
                                     }
@@ -128,19 +145,10 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                                 System.out.println("Error: " + error.getMessage());
                             }
                         });
-
-
-
-
-
-                        Toast.makeText(context, "Remove student " + studentNames[position], Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setView(dialogView);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+
             }
         });
 
@@ -156,40 +164,4 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-    public static void showDatePickerDialog(View v) {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        EditText date = (EditText) v;
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // Do something with the selected date
-                String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-                date.setText(selectedDate);
-            }
-        }, year, month, day);
-
-        datePickerDialog.show();
-    }
-
-    public static void showTimePickerDialog(View v) {
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        EditText time = (EditText) v;
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                String selectedTime = hourOfDay + ":" + minute;
-                time.setText(selectedTime);
-            }
-        }, hour, minute, true);
-
-        timePickerDialog.show();
-    }
-
 }
