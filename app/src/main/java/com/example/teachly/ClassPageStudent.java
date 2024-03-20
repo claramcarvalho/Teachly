@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -30,11 +31,18 @@ public class ClassPageStudent extends AppCompatActivity {
         className.setText(getIntent().getStringExtra("className"));
         classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
 
+        String classDescription = getIntent().getStringExtra("classDescription");
+        String classCategory = getIntent().getStringExtra("classCategory");
+        String classId = getIntent().getStringExtra("classId");
+        String classTeacherUId = getIntent().getStringExtra("classTeacherUId");
+        String teacherName = getIntent().getStringExtra("teacherName");
+        String teacherEmail = getIntent().getStringExtra("teacherEmail");
+        String teacherPhone = getIntent().getStringExtra("teacherPhone");
 
         tabStudent = findViewById(R.id.tabLayoutStudent);
         viewPagerStudent = findViewById(R.id.viewPagerStudent);
 
-        ViewPagerStudentAdapter pagerStudentAdapter = new ViewPagerStudentAdapter(this);
+        ViewPagerStudentAdapter pagerStudentAdapter = new ViewPagerStudentAdapter(this, classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId);
         viewPagerStudent.setAdapter(pagerStudentAdapter);
 
         viewPagerStudent.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

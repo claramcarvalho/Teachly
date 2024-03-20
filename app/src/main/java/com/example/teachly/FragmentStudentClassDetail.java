@@ -16,6 +16,8 @@ import android.widget.TextView;
  */
 public class FragmentStudentClassDetail extends Fragment {
 
+    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +30,16 @@ public class FragmentStudentClassDetail extends Fragment {
     public FragmentStudentClassDetail() {
         // Required empty public constructor
     }
+
+    public FragmentStudentClassDetail(String classDescription, String classCategory, String teacherName, String teacherEmail, String teacherPhone, String classId) {
+        this.classDescription = classDescription;
+        this.classCategory = classCategory;
+        this.teacherName = teacherName;
+        this.teacherEmail = teacherEmail;
+        this.teacherPhone = teacherPhone;
+        this.classId = classId;
+    }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -64,8 +76,14 @@ public class FragmentStudentClassDetail extends Fragment {
 
         TextView classDesc = rootView.findViewById(R.id.class_description);
         TextView classTag = rootView.findViewById(R.id.class_tag);
-        classDesc.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus.");
-        classTag.setText("French");
+        TextView teacherName = rootView.findViewById(R.id.tutorNameClassDetails);
+        TextView teacherEmail = rootView.findViewById(R.id.tutorEmailClassDetail);
+        TextView teacherPhone = rootView.findViewById(R.id.tutorPhoneClassDetail);
+        classDesc.setText(this.classDescription);
+        classTag.setText(this.classCategory);
+        teacherName.setText(this.teacherName);
+        teacherEmail.setText(this.teacherEmail);
+        teacherPhone.setText(this.teacherPhone);
 
         return rootView;
     }

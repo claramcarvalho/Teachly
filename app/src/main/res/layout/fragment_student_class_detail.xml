@@ -51,7 +51,7 @@
             android:layout_gravity="center"
             android:contentDescription="@string/user_picture"/>
         <TextView
-            android:id="@+id/studentName"
+            android:id="@+id/tutorNameClassDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -61,7 +61,7 @@
             android:layout_marginStart="20dp"/>
     </LinearLayout>
     <TextView
-        android:id="@+id/tutorEmail"
+        android:id="@+id/tutorEmailClassDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -72,7 +72,7 @@
         android:gravity="center_vertical"
         android:drawablePadding="10dp"/>
     <TextView
-        android:id="@+id/tutorPhone"
+        android:id="@+id/tutorPhoneClassDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -83,7 +83,7 @@
         android:gravity="center_vertical"
         android:drawablePadding="10dp"/>
     <TextView
-        android:id="@+id/btnTeacherTalkToStudent"
+        android:id="@+id/btnStudentTalkTeacher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -95,7 +95,7 @@
         app:drawableStartCompat="@drawable/icons_chat_30" />
 
     <TextView
-        android:id="@+id/btnTeacherRemoveStudent"
+        android:id="@+id/btnStudentDropClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableStartCompat="@drawable/icon_cross_mark_30"

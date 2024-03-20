@@ -14,7 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.teachly.Classes.Class;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -64,6 +72,9 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
         name.setText(nameClass);
         nbStudents.setText(String.valueOf(numberOfStudents) + " Students");
 
+        if (typeUser.equals("Student")) {
+            nbStudents.setVisibility(View.GONE);
+        }
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,15 +88,46 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
-     /*           if (typeUser.equals("Student")){
+                if (typeUser.equals("Student")){
                     Intent intent = new Intent(context,ClassPageStudent.class);
-                    intent.putExtra("className", className[position]);
-                    intent.putExtra("classColor", shapeColor[position]);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
-                }*/
+                    intent.putExtra("classId", classItem.getClassId());
+                    intent.putExtra("className", nameClass);
+                    intent.putExtra("classDescription", classItem.getDescription());
+                    intent.putExtra("classCategory", classItem.getCategory().name());
+                    intent.putExtra("classColor", shapeColor);
+                    intent.putExtra("classTeacherUId", classItem.getTeacherUId());
+                    DatabaseReference teacherReference = FirebaseDatabase.getInstance().getReference("users");
+                    Query findTeacher = teacherReference.orderByChild("userId").equalTo(classItem.getTeacherUId());
 
+                    findTeacher.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                String teacherName = "";
+                                String teacherEmail = "";
+                                String teacherPhone = "";
 
+                                for (DataSnapshot teacherSnapshot : snapshot.getChildren()) {
+                                    teacherName = teacherSnapshot.child("fullName").getValue(String.class);
+                                    teacherEmail = teacherSnapshot.child("email").getValue(String.class);
+                                    teacherPhone = teacherSnapshot.child("phoneNumber").getValue(String.class);
+                                }
+
+                                intent.putExtra("teacherName", teacherName);
+                                intent.putExtra("teacherEmail", teacherEmail);
+                                intent.putExtra("teacherPhone", teacherPhone);
+
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
             }
         });
         return convertView;

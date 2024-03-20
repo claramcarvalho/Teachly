@@ -6,8 +6,17 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class ViewPagerStudentAdapter extends FragmentStateAdapter {
-    public ViewPagerStudentAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId;
+
+    public ViewPagerStudentAdapter(@NonNull FragmentActivity fragmentActivity, String classDescription, String classCategory, String teacherName, String teacherEmail, String teacherPhone, String classId) {
         super(fragmentActivity);
+        this.classDescription = classDescription;
+        this.classCategory = classCategory;
+        this.teacherName = teacherName;
+        this.teacherEmail = teacherEmail;
+        this.teacherPhone = teacherPhone;
+        this.classId = classId;
     }
 
     @NonNull
@@ -19,7 +28,7 @@ public class ViewPagerStudentAdapter extends FragmentStateAdapter {
             case 1:
                 return new FragmentTeacherChat();
             case 2:
-                return new FragmentStudentClassDetail();
+                return new FragmentStudentClassDetail(classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId);
         };
         return new FragmentTeacherActivity();
     }

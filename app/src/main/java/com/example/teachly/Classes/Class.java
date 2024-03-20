@@ -1,9 +1,11 @@
 package com.example.teachly.Classes;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.teachly.HomeStudent;
 import com.example.teachly.HomeTeacher;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -184,6 +186,71 @@ public class Class {
                         listOfClasses.add(newClass);
                     }
                     HomeTeacher.loadAllClassesInList(context, listOfClasses);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    public static void loadAllClassesByStudentUId(Context context, String uId) {
+        DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
+        //Query findClasses = databaseReferenceClasses.child("students").ge.orderByChild("students").equalTo(uId);
+
+        databaseReferenceClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    ArrayList<Class> listOfClasses = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot studentSnapshot : classSnapshot.child("students").getChildren()) {
+                            String studentId = studentSnapshot.getValue(String.class);
+                            if (studentId.equals(uId)) {
+                                String classId = classSnapshot.child("classId").getValue(String.class);
+                                String className = classSnapshot.child("name").getValue(String.class);
+                                String classDesc = classSnapshot.child("description").getValue(String.class);
+                                String classTeacher = classSnapshot.child("teacherUId").getValue(String.class);
+                                String category = classSnapshot.child("category").getValue(String.class);
+                                String color = classSnapshot.child("color").getValue(String.class);
+
+                                Class newClass = new Class(classId,className,classDesc,classTeacher,color,EnumCategoryClass.valueOf(category));
+                                listOfClasses.add(newClass);
+                            }
+                        }
+
+
+                        /*String classId = classSnapshot.child("classId").getValue(String.class);
+                        String className = classSnapshot.child("name").getValue(String.class);
+                        String classDesc = classSnapshot.child("description").getValue(String.class);
+                        String category = classSnapshot.child("category").getValue(String.class);
+                        String color = classSnapshot.child("color").getValue(String.class);
+
+                        ArrayList<String> students = new ArrayList<>();
+                        DataSnapshot studentsSnapshot = classSnapshot.child("students");
+                        for (DataSnapshot studentSnapshot : studentsSnapshot.getChildren()) {
+                            String studentId = studentSnapshot.getValue(String.class);
+                            students.add(studentId);
+                        }
+
+                        ArrayList<Activity> activities1 = new ArrayList<>();
+                        DataSnapshot activitiesSnapshot = classSnapshot.child("activities");
+                        for (DataSnapshot activitySnapshot : activitiesSnapshot.getChildren()) {
+                            Activity activity = activitySnapshot.getValue(Activity.class);
+                            activities1.add(activity);
+                        }
+
+                        Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
+                        newClass.setStudents(students);
+                        newClass.setActivities(activities1);
+                        listOfClasses.add(newClass);
+                    }
+                    HomeTeacher.loadAllClassesInList(context, listOfClasses);*/
+                    }
+                    HomeStudent.loadAllClassesInList(context,listOfClasses);
                 }
             }
 
