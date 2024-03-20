@@ -102,7 +102,7 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
         View rootView = inflater.inflate(R.layout.fragment_teacher_activity, container, false);
 
         ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
-        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),listActivities);
+        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),listActivities, classId);
         listOfActivities.setAdapter(adapter);
 
         ImageButton btnAdd = rootView.findViewById(R.id.btn_teacher_add_activity);

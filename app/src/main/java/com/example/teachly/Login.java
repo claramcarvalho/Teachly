@@ -172,6 +172,7 @@ public class Login extends AppCompatActivity {
                         sharedPreferences = getSharedPreferences("Teachly", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("uId", currentUser.getUid());
+                        editor.putString("type", type);
                         editor.apply();
 
                         if (type.equals("Student")){

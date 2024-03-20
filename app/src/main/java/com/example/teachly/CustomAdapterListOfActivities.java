@@ -23,10 +23,19 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.DatePickerDialog;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
 
 import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.EnumTypeActivity;
+import com.example.teachly.Classes.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,10 +49,19 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
     LayoutInflater inflater;
     ArrayList<Activity> listActivities;
 
-    public CustomAdapterListOfActivities (Context appContext,  ArrayList<Activity> listActivities) {
+    String activityId, classId, teacherId;
+
+    SharedPreferences sharedPreferences;
+
+
+    public CustomAdapterListOfActivities (Context appContext,  ArrayList<Activity> listActivities, String classId) {
         context = appContext;
         this.listActivities = listActivities;
+        this.classId = classId;
         inflater = LayoutInflater.from(appContext);
+
+        sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        teacherId = sharedPreferences.getString("uId", "");
     }
     @Override
     public int getCount() {
@@ -71,12 +89,17 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         TextView date = convertView.findViewById(R.id.textActivityDueDate);
         RelativeLayout item = convertView.findViewById(R.id.btnGoCheckActivity);
 
+        activityId = this.listActivities.get(position).getId();
+
         name.setText(this.listActivities.get(position).getName());
         desc.setText(this.listActivities.get(position).getDescription());
         Long timestamp = this.listActivities.get(position).getDueDate();
         Date dateReceived = new Date(timestamp);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String dateString = dateFormat.format(dateReceived);
+
+        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+        String hourString = hourFormat.format(dateReceived);
 
         date.setText(dateString);
 
@@ -94,10 +117,10 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     TextView date = dialogView.findViewById(R.id.edtActivityDate);
                     TextView hour = dialogView.findViewById(R.id.edtActivityTime);
 
-                    //name.setText(activityName[position]);
-                    //desc.setText(activityDesc[position]);
-                    //date.setText(activityDueDate[position]);
-                    hour.setText("17:00");
+                    name.setText(listActivities.get(position).getName());
+                    desc.setText(listActivities.get(position).getDescription());
+                    date.setText(dateString);
+                    hour.setText(hourString);
 
                     date.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -114,24 +137,76 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     });
 
                     Spinner spinner = dialogView.findViewById(R.id.spinnerActivityType);
-                    List<String> categories = new ArrayList<String>();
-                    categories.add("Homework");
-                    categories.add("Exam");
-                    categories.add("Trip");
-                    categories.add("Extra class");
-                    categories.add("Book to read");
-                    ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, categories);
+                    List<String> typeActivities = new ArrayList<String>();
+                    for (EnumTypeActivity value : EnumTypeActivity.values()){
+                        typeActivities.add(value.name());
+                    }
+                    ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, typeActivities);
                     adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapterSpinner);
                     spinner.setOnItemSelectedListener(CustomAdapterListOfActivities.this);
 
-                    spinner.setSelection(3);
-
+                    Integer selectedIndex = 0;
+                    for (int i = 0;i<typeActivities.size();i++) {
+                        if (typeActivities.get(i).equals(listActivities.get(position).getType().name())) {
+                            selectedIndex = i;
+                        }
+                    }
+                    spinner.setSelection(selectedIndex);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setView(dialogView);
                     AlertDialog dialog = builder.create();
                     dialog.show();
+
+
+                    TextView btnSave = dialogView.findViewById(R.id.btnSaveActivity);
+                    TextView btnDelete = dialogView.findViewById(R.id.btnDeleteActivity);
+
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/activities");
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                    ////////// NAO TERMINAMOS DE DELETAR, TA DELETANDO O ULTIMO SEMPRE
+                                    if (snapshot.exists()) {
+                                        for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
+                                            String id = activitySnapshot.getKey();
+                                            if (id.equals(activityId)){
+                                                Toast.makeText(parent.getContext(), id, Toast.LENGTH_SHORT).show();
+
+                                                // activitySnapshot.getRef().removeValue();
+                                            }
+                                        }
+                                        //for (Activity item : listActivities){
+                                            //if (item.getId().equals(activityId)){
+                                            //    listActivities.remove(item);
+                                            //    notifyDataSetChanged();
+                                          //      Toast.makeText(parent.getContext(), "Activity " + item.getName() + " was removed!", Toast.LENGTH_SHORT).show();
+                                           //     Class.loadAllClassesByTeacherUId(parent.getContext(), teacherId);
+                                           //     dialog.dismiss();
+                                          //      return;
+                                           // }
+                                       // }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    System.out.println("Error: " + error.getMessage());
+                                }
+                            });
+                        }
+                    });
+
+
+
+
+
+
                 }
                 /*if (typeUser.equals("Student")){
                     View dialogView = inflater.inflate(R.layout.dialog_student_view_activity, null);

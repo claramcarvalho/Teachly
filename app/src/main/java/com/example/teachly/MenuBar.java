@@ -65,6 +65,7 @@ public class MenuBar {
                     SharedPreferences sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("uId");
+                    editor.remove("type");
                     editor.apply();
                     Intent intent = new Intent(context, Login.class);
                     context.startActivity(intent);

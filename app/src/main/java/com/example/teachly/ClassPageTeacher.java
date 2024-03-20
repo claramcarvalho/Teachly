@@ -110,12 +110,13 @@ public class ClassPageTeacher extends AppCompatActivity {
                                             if (snapshot.exists()) {
                                                 ArrayList<Activity> activitiesList = new ArrayList<>();
                                                 for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
+                                                    String id = activitySnapshot.getKey();
                                                     String nameAct = activitySnapshot.child("name").getValue(String.class);
                                                     String descAct = activitySnapshot.child("description").getValue(String.class);
                                                     Long dueDateAct = activitySnapshot.child("dueDate").getValue(Long.class);
                                                     String typeAct = activitySnapshot.child("type").getValue(String.class);
 
-                                                    Activity newActivity = new Activity(nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
+                                                    Activity newActivity = new Activity(id, nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
                                                     activitiesList.add(newActivity);
                                                 }
                                                 loadClassPageTeacher(listStudents, activitiesList, classId);
@@ -150,12 +151,13 @@ public class ClassPageTeacher extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 ArrayList<Activity> activitiesList = new ArrayList<Activity>();
                                 for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
+                                    String id = activitySnapshot.getKey();
                                     String nameAct = activitySnapshot.child("name").getValue(String.class);
                                     String descAct = activitySnapshot.child("description").getValue(String.class);
                                     Long dueDateAct = activitySnapshot.child("dueDate").getValue(Long.class);
                                     String typeAct = activitySnapshot.child("type").getValue(String.class);
 
-                                    Activity newActivity = new Activity(nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
+                                    Activity newActivity = new Activity(id, nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
                                     activitiesList.add(newActivity);
                                 }
                                 loadClassPageTeacher(null, activitiesList, classId);
