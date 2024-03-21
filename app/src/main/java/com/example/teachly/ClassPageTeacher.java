@@ -111,7 +111,7 @@ public class ClassPageTeacher extends AppCompatActivity {
                     }
                 }
                 else {
-                    loadClassPageTeacher(null, myClass.getActivities(), myClass.getClassId());
+                    loadClassPageTeacher(new ArrayList<>(), myClass.getActivities(), myClass.getClassId());
                 }
             }
 

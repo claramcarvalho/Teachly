@@ -179,7 +179,12 @@ public class Class implements Serializable {
                         ArrayList<Activity> activities1 = new ArrayList<>();
                         DataSnapshot activitiesSnapshot = classSnapshot.child("activities");
                         for (DataSnapshot activitySnapshot : activitiesSnapshot.getChildren()) {
-                            Activity activity = activitySnapshot.getValue(Activity.class);
+                            String activityId = activitySnapshot.getKey();
+                            String activityName = activitySnapshot.child("name").getValue(String.class);
+                            String activityDesc = activitySnapshot.child("description").getValue(String.class);
+                            String activityType = activitySnapshot.child("type").getValue(String.class);
+                            Long activityDueDate = activitySnapshot.child("dueDate").getValue(Long.class);
+                            Activity activity = new Activity(activityId, activityName, activityDesc, activityDueDate, EnumTypeActivity.valueOf(activityType));
                             activities1.add(activity);
                         }
 
