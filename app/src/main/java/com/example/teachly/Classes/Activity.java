@@ -1,9 +1,10 @@
 package com.example.teachly.Classes;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Activity {
-
+public class Activity implements Serializable {
+    private static final long serialVersionUID = 123456798L;
     private String id;
     private String name;
     private String description;

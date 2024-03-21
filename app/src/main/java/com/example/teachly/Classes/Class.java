@@ -14,10 +14,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Class {
+public class Class implements Serializable {
+
+    private static final long serialVersionUID = 123456789L;
     private String classId;
     private String name;
     private String description;

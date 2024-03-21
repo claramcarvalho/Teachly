@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class CustomAdapterListOfClasses extends BaseAdapter {
@@ -90,12 +92,9 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
                 }
                 if (typeUser.equals("Student")){
                     Intent intent = new Intent(context,ClassPageStudent.class);
-                    intent.putExtra("classId", classItem.getClassId());
-                    intent.putExtra("className", nameClass);
-                    intent.putExtra("classDescription", classItem.getDescription());
-                    intent.putExtra("classCategory", classItem.getCategory().name());
-                    intent.putExtra("classColor", shapeColor);
-                    intent.putExtra("classTeacherUId", classItem.getTeacherUId());
+
+                    intent.putExtra("myClass", classItem);
+
                     DatabaseReference teacherReference = FirebaseDatabase.getInstance().getReference("users");
                     Query findTeacher = teacherReference.orderByChild("userId").equalTo(classItem.getTeacherUId());
 
@@ -103,19 +102,25 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
+                                String teacherId = "";
+                                String password = "";
                                 String teacherName = "";
                                 String teacherEmail = "";
                                 String teacherPhone = "";
+                                String type = "";
 
                                 for (DataSnapshot teacherSnapshot : snapshot.getChildren()) {
+                                    teacherId = teacherSnapshot.child("userId").getValue(String.class);
+                                    password = teacherSnapshot.child("password").getValue(String.class);
                                     teacherName = teacherSnapshot.child("fullName").getValue(String.class);
                                     teacherEmail = teacherSnapshot.child("email").getValue(String.class);
                                     teacherPhone = teacherSnapshot.child("phoneNumber").getValue(String.class);
+                                    type = teacherSnapshot.child("type").getValue(String.class);
                                 }
 
-                                intent.putExtra("teacherName", teacherName);
-                                intent.putExtra("teacherEmail", teacherEmail);
-                                intent.putExtra("teacherPhone", teacherPhone);
+                                User myTeacher = new User(teacherId,teacherEmail,password,teacherName,teacherPhone,type);
+
+                                intent.putExtra("myTeacher", myTeacher);
 
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
