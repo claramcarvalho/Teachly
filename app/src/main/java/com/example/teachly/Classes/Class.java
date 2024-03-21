@@ -206,8 +206,10 @@ public class Class {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     ArrayList<Class> listOfClasses = new ArrayList<>();
+                    Class newClass = new Class();
                     for (DataSnapshot classSnapshot : snapshot.getChildren()) {
                         for (DataSnapshot studentSnapshot : classSnapshot.child("students").getChildren()) {
+                            //checking if student is in class
                             String studentId = studentSnapshot.getValue(String.class);
                             if (studentId.equals(uId)) {
                                 String classId = classSnapshot.child("classId").getValue(String.class);
@@ -217,38 +219,19 @@ public class Class {
                                 String category = classSnapshot.child("category").getValue(String.class);
                                 String color = classSnapshot.child("color").getValue(String.class);
 
-                                Class newClass = new Class(classId,className,classDesc,classTeacher,color,EnumCategoryClass.valueOf(category));
+                                newClass = new Class(classId,className,classDesc,classTeacher,color,EnumCategoryClass.valueOf(category));
+
+                                //getting activities
+                                ArrayList<Activity> activities1 = new ArrayList<>();
+                                DataSnapshot activitiesSnapshot = classSnapshot.child("activities");
+                                for (DataSnapshot activitySnapshot : activitiesSnapshot.getChildren()) {
+                                    Activity activity = activitySnapshot.getValue(Activity.class);
+                                    activities1.add(activity);
+                                }
+                                newClass.setActivities(activities1);
                                 listOfClasses.add(newClass);
                             }
                         }
-
-
-                        /*String classId = classSnapshot.child("classId").getValue(String.class);
-                        String className = classSnapshot.child("name").getValue(String.class);
-                        String classDesc = classSnapshot.child("description").getValue(String.class);
-                        String category = classSnapshot.child("category").getValue(String.class);
-                        String color = classSnapshot.child("color").getValue(String.class);
-
-                        ArrayList<String> students = new ArrayList<>();
-                        DataSnapshot studentsSnapshot = classSnapshot.child("students");
-                        for (DataSnapshot studentSnapshot : studentsSnapshot.getChildren()) {
-                            String studentId = studentSnapshot.getValue(String.class);
-                            students.add(studentId);
-                        }
-
-                        ArrayList<Activity> activities1 = new ArrayList<>();
-                        DataSnapshot activitiesSnapshot = classSnapshot.child("activities");
-                        for (DataSnapshot activitySnapshot : activitiesSnapshot.getChildren()) {
-                            Activity activity = activitySnapshot.getValue(Activity.class);
-                            activities1.add(activity);
-                        }
-
-                        Class newClass = new Class(classId, className, classDesc, uId, color, EnumCategoryClass.valueOf(category));
-                        newClass.setStudents(students);
-                        newClass.setActivities(activities1);
-                        listOfClasses.add(newClass);
-                    }
-                    HomeTeacher.loadAllClassesInList(context, listOfClasses);*/
                     }
                     HomeStudent.loadAllClassesInList(context,listOfClasses);
                 }

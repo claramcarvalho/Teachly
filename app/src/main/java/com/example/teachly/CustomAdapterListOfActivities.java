@@ -234,14 +234,8 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                             });
                         }
                     });
-
-
-
-
-
-
                 }
-                /*if (typeUser.equals("Student")){
+                if (typeUser.equals("Student")){
                     View dialogView = inflater.inflate(R.layout.dialog_student_view_activity, null);
 
                     TextView name = dialogView.findViewById(R.id.textNameActivityStudentModal);
@@ -250,19 +244,17 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
                     TextView hour = dialogView.findViewById(R.id.textHourActivityStudentModal);
                     TextView tag = dialogView.findViewById(R.id.activity_tag);
 
-                    name.setText(activityName[position]);
-                    desc.setText(activityDesc[position]);
-                    date.setText(activityDueDate[position]);
-                    hour.setText("17:00");
-                    tag.setText("Homework");
+                    name.setText(listActivities.get(position).getName());
+                    desc.setText(listActivities.get(position).getDescription());
+                    date.setText(dateString);
+                    hour.setText(hourString);
+                    tag.setText(listActivities.get(position).getType().name());
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setView(dialogView);
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }*/
-
-
+                }
             }
         });
         return convertView;

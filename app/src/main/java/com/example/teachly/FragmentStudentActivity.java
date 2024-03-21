@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.example.teachly.Classes.Activity;
+
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentStudentActivity#newInstance} factory method to
@@ -21,12 +25,20 @@ public class FragmentStudentActivity extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    ArrayList<Activity> listActivities;
+    String classid;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     public FragmentStudentActivity() {
         // Required empty public constructor
+    }
+
+    public FragmentStudentActivity(ArrayList<Activity> listActivities, String classId) {
+        this.listActivities = listActivities;
+        this.classid = classId;
     }
 
     /**
@@ -67,8 +79,8 @@ public class FragmentStudentActivity extends Fragment {
         String[] dates = {"30/04/2024", "10/03/2024", "01/03/2024"};
 
         ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
-        //CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),names,descs,dates);
-        //listOfActivities.setAdapter(adapter);
+        CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),listActivities,classid);
+        listOfActivities.setAdapter(adapter);
 
         // Inflate the layout for this fragment
         return rootView;
