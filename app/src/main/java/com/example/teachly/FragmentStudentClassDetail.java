@@ -1,13 +1,26 @@
 package com.example.teachly;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,7 +29,8 @@ import android.widget.TextView;
  */
 public class FragmentStudentClassDetail extends Fragment {
 
-    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId;
+    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId, userId;
+    SharedPreferences sharedPreferences;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -66,6 +80,9 @@ public class FragmentStudentClassDetail extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        sharedPreferences = getContext().getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        userId = sharedPreferences.getString("uId", "");
     }
 
     @Override
@@ -79,11 +96,50 @@ public class FragmentStudentClassDetail extends Fragment {
         TextView teacherName = rootView.findViewById(R.id.tutorNameClassDetails);
         TextView teacherEmail = rootView.findViewById(R.id.tutorEmailClassDetail);
         TextView teacherPhone = rootView.findViewById(R.id.tutorPhoneClassDetail);
+        TextView btnTalkToTeacher = rootView.findViewById(R.id.btnStudentTalkTeacher);
+        TextView btnDropClass = rootView.findViewById(R.id.btnStudentDropClass);
         classDesc.setText(this.classDescription);
         classTag.setText(this.classCategory);
         teacherName.setText(this.teacherName);
         teacherEmail.setText(this.teacherEmail);
         teacherPhone.setText(this.teacherPhone);
+
+        btnTalkToTeacher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnDropClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
+                databaseReferenceClasses.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
+                                String uId = studentSnapshot.getValue(String.class);
+                                if (uId.equals(userId)){
+                                    studentSnapshot.getRef().removeValue();
+                                    Toast.makeText(getContext(), "You were removed from this class successfully!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), HomeStudent.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
 
         return rootView;
     }
