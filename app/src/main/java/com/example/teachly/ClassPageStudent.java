@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumTypeActivity;
 import com.example.teachly.Classes.User;
 import com.google.android.material.tabs.TabLayout;
@@ -37,54 +38,22 @@ public class ClassPageStudent extends AppCompatActivity {
         MenuBar menuBar = new MenuBar(this);
         menuBar.setupActionBar();
 
+        Class myClass = (Class) getIntent().getSerializableExtra("myClass");
+        User myTeacher = (User) getIntent().getSerializableExtra("myTeacher");
+
         classShape = findViewById(R.id.class_shape);
         className = findViewById(R.id.class_title);
-        className.setText(getIntent().getStringExtra("className"));
-        classShape.setColorFilter(Color.parseColor(getIntent().getStringExtra("classColor")), PorterDuff.Mode.SRC_IN);
-
-        String classDescription = getIntent().getStringExtra("classDescription");
-        String classCategory = getIntent().getStringExtra("classCategory");
-        String classId = getIntent().getStringExtra("classId");
-        String classTeacherUId = getIntent().getStringExtra("classTeacherUId");
-        String teacherName = getIntent().getStringExtra("teacherName");
-        String teacherEmail = getIntent().getStringExtra("teacherEmail");
-        String teacherPhone = getIntent().getStringExtra("teacherPhone");
+        className.setText(myClass.getName());
+        classShape.setColorFilter(Color.parseColor(myClass.getColor()), PorterDuff.Mode.SRC_IN);
 
         tabStudent = findViewById(R.id.tabLayoutStudent);
         viewPagerStudent = findViewById(R.id.viewPagerStudent);
 
-        DatabaseReference databaseReferenceAct = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/activities");
-        databaseReferenceAct.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    ArrayList<Activity> activitiesList = new ArrayList<Activity>();
-                    for (DataSnapshot activitySnapshot : snapshot.getChildren()) {
-                        String id = activitySnapshot.getKey();
-                        String nameAct = activitySnapshot.child("name").getValue(String.class);
-                        String descAct = activitySnapshot.child("description").getValue(String.class);
-                        Long dueDateAct = activitySnapshot.child("dueDate").getValue(Long.class);
-                        String typeAct = activitySnapshot.child("type").getValue(String.class);
-
-                        Activity newActivity = new Activity(id, nameAct, descAct, dueDateAct, EnumTypeActivity.valueOf(typeAct));
-                        activitiesList.add(newActivity);
-                    }
-                    loadClassPageStudent(activitiesList, classId, classDescription, classCategory, teacherName, teacherEmail, teacherPhone);
-                }
-                else {
-                    loadClassPageStudent(null, classId, classDescription, classCategory, teacherName, teacherEmail, teacherPhone);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                System.out.println("Error: " + error.getMessage());
-            }
-        });
+        loadClassPageStudent(myClass,myTeacher);
     }
 
-    public void loadClassPageStudent(ArrayList<Activity> listActivities, String classId, String classDescription, String classCategory, String teacherName, String teacherEmail, String teacherPhone){
-        ViewPagerStudentAdapter pagerStudentAdapter = new ViewPagerStudentAdapter(this, listActivities, classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId);
+    public void loadClassPageStudent(Class myClass, User myTeacher){
+        ViewPagerStudentAdapter pagerStudentAdapter = new ViewPagerStudentAdapter(this, myClass, myTeacher);
         viewPagerStudent.setAdapter(pagerStudentAdapter);
 
         viewPagerStudent.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

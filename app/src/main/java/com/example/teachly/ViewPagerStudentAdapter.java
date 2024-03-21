@@ -5,24 +5,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.teachly.Classes.Activity;
-
-import java.util.ArrayList;
+import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.User;
 
 public class ViewPagerStudentAdapter extends FragmentStateAdapter {
 
-    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId;
-    ArrayList<Activity> listActivities;
+    Class myClass;
+    User myTeacher;
 
-    public ViewPagerStudentAdapter(@NonNull FragmentActivity fragmentActivity, ArrayList<Activity> listActivities, String classDescription, String classCategory, String teacherName, String teacherEmail, String teacherPhone, String classId) {
+    public ViewPagerStudentAdapter(@NonNull FragmentActivity fragmentActivity, Class myClass, User myTeacher) {
         super(fragmentActivity);
-        this.listActivities = listActivities;
-        this.classDescription = classDescription;
-        this.classCategory = classCategory;
-        this.teacherName = teacherName;
-        this.teacherEmail = teacherEmail;
-        this.teacherPhone = teacherPhone;
-        this.classId = classId;
+        this.myClass = myClass;
+        this.myTeacher = myTeacher;
     }
 
     @NonNull
@@ -30,11 +24,11 @@ public class ViewPagerStudentAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new FragmentStudentActivity(listActivities, classId);
+                return new FragmentStudentActivity(myClass.getActivities(), myClass.getClassId());
             case 1:
                 return new FragmentTeacherChat();
             case 2:
-                return new FragmentStudentClassDetail(classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId);
+                return new FragmentStudentClassDetail(myClass.getDescription(), myClass.getCategory().name(), myTeacher.getFullName(), myTeacher.getEmail(), myTeacher.getPhoneNumber(), myClass.getClassId());
         };
         return new FragmentTeacherActivity();
     }
