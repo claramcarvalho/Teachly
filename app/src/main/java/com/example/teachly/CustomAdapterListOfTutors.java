@@ -65,8 +65,6 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
 
         String teacherId = this.list.get(position).getTeacherUId();
 
-
-
         RelativeLayout layout = convertView.findViewById(R.id.btnGoCheckTutor);
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,58 +107,4 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
 
         return convertView;
     }
-
-
-    /*@Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = inflater.inflate(R.layout.list_item_tutors, null);
-        TextView className = convertView.findViewById(R.id.txtClassNameListView);
-        TextView classCategory = convertView.findViewById(R.id.txtClassTypeListView);
-        TextView name = convertView.findViewById(R.id.txtTutorNameListView);
-        TextView email = convertView.findViewById(R.id.txtTutorEmailListView);
-        TextView phone = convertView.findViewById(R.id.txtTutorPhoneListView);
-
-        className.setText(this.list.get(position).getName());
-        classCategory.setText(this.list.get(position).getCategory().name());
-
-        User teacherId = this.list.get(position).getTeacher();
-
-        CompletableFuture<User> teacherResult = CompletableFuture.supplyAsync(() -> {
-            try {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                Query findTutor = reference.orderByChild("userId").equalTo(teacherId);
-                User teacher = new User();
-                findTutor.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            String nameOfTeacher = snapshot.child("fullName").getValue(String.class);
-                            String teacherEmail = snapshot.child("email").getValue(String.class);
-                            String teacherPhone = snapshot.child("phoneNumber").getValue(String.class);
-                            String password = snapshot.child("password").getValue(String.class);
-                            String type = snapshot.child("type").getValue(String.class);
-
-                            // Atualize as TextViews dentro do onDataChange
-                            name.setText(nameOfTeacher);
-                            email.setText(teacherEmail);
-                            phone.setText(teacherPhone);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Trate o cancelamento, se necessário
-                    }
-                });
-
-                return teacher;
-            } catch (Exception e) {
-                Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                return null;
-            }
-        });
-
-        return convertView;
-    }*/
-
 }

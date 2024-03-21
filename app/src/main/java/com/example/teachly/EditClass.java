@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,7 +35,8 @@ import java.util.List;
 public class EditClass extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     TextView btnSave, btnDelete;
-    String classId, className, classDescription, classCategory, classColor, newClassCategory;
+    Class myClass;
+    String newClassCategory;
     EditText edtClassName, edtDescription;
     Spinner spinner;
     RadioGroup radioGroup;
@@ -50,21 +52,18 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
         btnSave = findViewById(R.id.btnSaveClassOnEditClass);
         btnDelete = findViewById(R.id.btnDeleteClassOnEditClass);
 
-        classId = getIntent().getStringExtra("editClassId");
+        myClass = (Class) getIntent().getSerializableExtra("myClass");
 
         edtClassName = findViewById(R.id.edtEditClassName);
-        className = getIntent().getStringExtra("editClassName");
-        edtClassName.setText(className);
+        edtClassName.setText(myClass.getName());
 
         edtDescription = findViewById(R.id.edtEditClassDescription);
-        classDescription = getIntent().getStringExtra("editClassDescription");
-        edtDescription.setText(classDescription);
+        edtDescription.setText(myClass.getDescription());
 
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("classes");
 
         ////// CATEGORIA
-        classCategory = getIntent().getStringExtra("editClassCategory");
         spinner = findViewById(R.id.spinnerTeacherEditClassCategory);
         List<String> categories = new ArrayList<String>();
         Integer selectedIndex = 0;
@@ -72,7 +71,7 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
             categories.add(value.name());
         }
         for (int i = 0;i<categories.size();i++) {
-            if (categories.get(i).equals(classCategory)) {
+            if (categories.get(i).equals(myClass.getCategory().name())) {
                 selectedIndex = i;
             }
         }
@@ -84,8 +83,7 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
 
         ///////SETTING ORIGINAL COLOR
         ImageView edtClassColor = findViewById(R.id.editClassColor);
-        classColor = getIntent().getStringExtra("editClassColor");
-        edtClassColor.setColorFilter(Color.parseColor(classColor), PorterDuff.Mode.SRC_IN);
+        edtClassColor.setColorFilter(Color.parseColor(myClass.getColor()), PorterDuff.Mode.SRC_IN);
 
         /////CHANGING COLOR IF RADIOBUTTON IS SELECTED
         radioGroup = findViewById(R.id.radioColorEditClass);
@@ -104,7 +102,7 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
             if (view instanceof RadioButton) {
                 RadioButton radioButton = (RadioButton) view;
                 String textRadioButton = radioButton.getText().toString();
-                if (textRadioButton.equals(classColor)) {
+                if (textRadioButton.equals(myClass.getColor())) {
                     radioButton.setChecked(true);
                     break;
                 }
@@ -142,17 +140,17 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        Query findClass = reference.orderByChild("classId").equalTo(classId);
+                        Query findClass = reference.orderByChild("classId").equalTo(myClass.getClassId());
 
                         findClass.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
-                                    snapshot.child(classId).getRef().removeValue();
+                                    snapshot.child(myClass.getClassId()).getRef().removeValue();
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(EditClass.this);
                                     builder.setTitle("Class deleted");
-                                    builder.setMessage("Your class " + className + " was deleted!!");
+                                    builder.setMessage("Your class " + myClass.getName() + " was deleted!!");
 
                                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                         @Override
@@ -203,29 +201,29 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
     }
 
     private boolean isClassNameChanged (){
-        if (!className.equals(edtClassName.getText().toString().trim())) {
-            reference.child(classId).child("name").setValue(edtClassName.getText().toString().trim());
+        if (!myClass.getName().equals(edtClassName.getText().toString().trim())) {
+            reference.child(myClass.getClassId()).child("name").setValue(edtClassName.getText().toString().trim());
             return true;
         }
         return false;
     }
     private boolean isClassDescriptionChanged (){
-        if (!classDescription.equals(edtDescription.getText().toString().trim())) {
-            reference.child(classId).child("description").setValue(edtDescription.getText().toString().trim());
+        if (!myClass.getDescription().equals(edtDescription.getText().toString().trim())) {
+            reference.child(myClass.getClassId()).child("description").setValue(edtDescription.getText().toString().trim());
             return true;
         }
         return false;
     }
     private boolean isClassCategoryChanged (){
-        if (!classCategory.equals(newClassCategory)) {
-            reference.child(classId).child("category").setValue(newClassCategory);
+        if (!myClass.getCategory().name().equals(newClassCategory)) {
+            reference.child(myClass.getClassId()).child("category").setValue(newClassCategory);
             return true;
         }
         return false;
     }
     private boolean isClassColorChanged (){
-        if (!classColor.equals(txtNewColor)) {
-            reference.child(classId).child("color").setValue(txtNewColor);
+        if (!myClass.getColor().equals(txtNewColor)) {
+            reference.child(myClass.getClassId()).child("color").setValue(txtNewColor);
             return true;
         }
         return false;
