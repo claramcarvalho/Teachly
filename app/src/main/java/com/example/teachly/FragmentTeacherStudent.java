@@ -122,111 +122,67 @@ public class FragmentTeacherStudent extends Fragment {
                             Toast.makeText(getContext(), "Please enter a valid e-mail!", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        else {
-                            DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("users");
-                            Query findUser = databaseReferenceUsers.orderByChild("email").equalTo(email);
+                        if (listStudent!=null) {
+                            for (User item : listStudent){
+                                if (item.getEmail().equals(email)){
+                                    Toast.makeText(getContext(), "This user is already in this class!", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
+                        }
 
-                            findUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                                            String type = userSnapshot.child("type").getValue(String.class);
+                        DatabaseReference databaseReferenceUsers = FirebaseDatabase.getInstance().getReference("users");
+                        Query findUser = databaseReferenceUsers.orderByChild("email").equalTo(email);
 
-                                            if (!type.equals("Student")){
-                                                Toast.makeText(getContext(), "This user is not a student!", Toast.LENGTH_SHORT).show();
+                        findUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                        String type = userSnapshot.child("type").getValue(String.class);
+
+                                        if (!type.equals("Student")){
+                                            Toast.makeText(getContext(), "This user is not a student!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            String uId = userSnapshot.child("userId").getValue(String.class);
+                                            String fullname = userSnapshot.child("fullName").getValue(String.class);
+                                            String email = userSnapshot.child("email").getValue(String.class);
+                                            String password = userSnapshot.child("password").getValue(String.class);
+                                            String phoneNumber = userSnapshot.child("phoneNumber").getValue(String.class);
+                                            String newType = userSnapshot.child("type").getValue(String.class);
+                                            User newUser = new User(uId, email, password, fullname, phoneNumber, type);
+
+                                            if (listStudent != null) {
+                                                listStudent.add(newUser);
+                                            } else {
+                                                listStudent = new ArrayList<>();
+                                                listStudent.add(newUser);
                                             }
-                                            else {
-                                                String uId = userSnapshot.child("userId").getValue(String.class);
 
-                                                DatabaseReference classesRef = FirebaseDatabase.getInstance().getReference("classes");
-                                                DatabaseReference classRef = classesRef.child(classId);
+                                            DatabaseReference classesRef = FirebaseDatabase.getInstance().getReference("classes");
+                                            DatabaseReference classRef = classesRef.child(classId);
 
+                                            DatabaseReference newStudentRef = classRef.child("students").push();
+                                            newStudentRef.setValue(uId);
 
-                                                if (listStudent != null){
-                                                    for (User item : listStudent){
-                                                        if (item.getUserId().equals(uId)){
-                                                            Toast.makeText(getContext(), "This user is already in this class!", Toast.LENGTH_SHORT).show();
-                                                            return;
-                                                        }
-                                                    }
-                                                }
+                                            Class.loadAllClassesByTeacherUId(getContext(), userId);
 
+                                            Toast.makeText(getContext(), "Student was added to this class!", Toast.LENGTH_SHORT).show();
 
-                                                DatabaseReference newStudentRef = classRef.child("students").push();
-                                                newStudentRef.setValue(uId);
-
-                                                Class.loadAllClassesByTeacherUId(getContext(), userId);
-
-                                                Toast.makeText(getContext(), "Student was added to this class!", Toast.LENGTH_SHORT).show();
-
-                                                ArrayList<User> newListStudents = new ArrayList<>();
-                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
-                                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        if (snapshot.exists()) {
-                                                            List<String> studentIds = new ArrayList<>();
-                                                            for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
-                                                                String studentId = studentSnapshot.getValue(String.class);
-                                                                studentIds.add(studentId);
-                                                            }
-
-                                                            for (String item : studentIds){
-                                                                DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference("users");
-                                                                Query findStudents = databaseReference1.orderByChild("userId").equalTo(item);
-
-                                                                findStudents.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                    @Override
-                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                        if (snapshot.exists()){
-                                                                            for (DataSnapshot userSnapshot : snapshot.getChildren()){
-                                                                                String fullname = userSnapshot.child("fullName").getValue(String.class);
-                                                                                String email = userSnapshot.child("email").getValue(String.class);
-                                                                                String password = userSnapshot.child("password").getValue(String.class);
-                                                                                String phoneNumber = userSnapshot.child("phoneNumber").getValue(String.class);
-                                                                                String type = userSnapshot.child("type").getValue(String.class);
-                                                                                User newUser = new User(item, email, password, fullname, phoneNumber, type);
-
-                                                                                newListStudents.add(newUser);
-                                                                            }
-                                                                            listStudent = newListStudents;
-                                                                            CustomAdapterListOfStudents adapter = new CustomAdapterListOfStudents(getContext(),listStudent, classId);
-                                                                            listOfStudents.setAdapter(adapter);
-
-                                                                            dialog.dismiss();
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                        System.out.println("Error: " + error.getMessage());
-                                                    }
-                                                });
-                                            }
+                                            adapter.notifyDataSetChanged();
+                                            dialog.dismiss();
                                         }
                                     }
-                                    else {
-                                        Toast.makeText(getContext(), "This user does not exist!", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
                                 }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
+                                else {
+                                    Toast.makeText(getContext(), "This user does not exist!", Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                        }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
                     }
                 });
             }

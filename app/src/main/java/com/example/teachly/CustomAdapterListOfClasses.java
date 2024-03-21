@@ -72,7 +72,7 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
 
         shape.setColorFilter(Color.parseColor(shapeColor), PorterDuff.Mode.SRC_IN);
         name.setText(nameClass);
-        nbStudents.setText(String.valueOf(numberOfStudents) + " Students");
+        nbStudents.setText(String.valueOf(numberOfStudents) + " students");
 
         if (typeUser.equals("Student")) {
             nbStudents.setVisibility(View.GONE);
@@ -82,11 +82,9 @@ public class CustomAdapterListOfClasses extends BaseAdapter {
             public void onClick(View v) {
                 if (typeUser.equals("Teacher")){
                     Intent intent = new Intent(context,ClassPageTeacher.class);
-                    intent.putExtra("classId", classItem.getClassId());
-                    intent.putExtra("className", nameClass);
-                    intent.putExtra("classDescription", classItem.getDescription());
-                    intent.putExtra("classCategory", classItem.getCategory().name());
-                    intent.putExtra("classColor", shapeColor);
+
+                    intent.putExtra("myClass", classItem);
+
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }

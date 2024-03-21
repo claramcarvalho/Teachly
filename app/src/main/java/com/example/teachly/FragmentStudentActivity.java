@@ -74,15 +74,10 @@ public class FragmentStudentActivity extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_student_activity, container, false);
 
-        String[] names = {"Exam","Visit Museum","Homework"};
-        String[] descs = {"Exam about conjugations", "We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions We will go to the Museum of Ilusions ", "Do page 43 and 45 of the book"};
-        String[] dates = {"30/04/2024", "10/03/2024", "01/03/2024"};
-
         ListView listOfActivities = rootView.findViewById(R.id.listOfActivities);
         CustomAdapterListOfActivities adapter = new CustomAdapterListOfActivities(getContext(),listActivities,classid);
         listOfActivities.setAdapter(adapter);
 
-        // Inflate the layout for this fragment
         return rootView;
     }
 }
