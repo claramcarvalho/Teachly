@@ -151,14 +151,9 @@ public class FragmentTeacherStudent extends Fragment {
                                             String password = userSnapshot.child("password").getValue(String.class);
                                             String phoneNumber = userSnapshot.child("phoneNumber").getValue(String.class);
                                             String newType = userSnapshot.child("type").getValue(String.class);
-                                            User newUser = new User(uId, email, password, fullname, phoneNumber, type);
+                                            User newUser = new User(uId, email, password, fullname, phoneNumber, newType);
 
-                                            if (listStudent != null) {
-                                                listStudent.add(newUser);
-                                            } else {
-                                                listStudent = new ArrayList<>();
-                                                listStudent.add(newUser);
-                                            }
+                                            listStudent.add(newUser);
 
                                             DatabaseReference classesRef = FirebaseDatabase.getInstance().getReference("classes");
                                             DatabaseReference classRef = classesRef.child(classId);
