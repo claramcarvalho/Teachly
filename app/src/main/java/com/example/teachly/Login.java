@@ -20,7 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.teachly.Classes.User;
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chat.models.User;
+import com.cometchat.chatuikit.shared.cometchatuikit.CometChatUIKit;
+import com.cometchat.chatuikit.shared.cometchatuikit.UIKitSettings;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -45,10 +49,29 @@ public class Login extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference reference;
 
+    String appID = "2548689ee4e78b36";
+    String region = "us";
+    String authKey= "75679d425ffc49b3354168ce1589b0f123d401ca";
+
     @Override
     protected void onStart() {
         super.onStart();
         searchUserRealtimeDatabase();
+
+        UIKitSettings uiKitSettings = new UIKitSettings.UIKitSettingsBuilder()
+                .setRegion(region)
+                .setAppId(appID)
+                .setAuthKey(authKey)
+                .subscribePresenceForAllUsers().build();
+
+        CometChatUIKit.init(this, uiKitSettings, new CometChat.CallbackListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+            }
+            @Override
+            public void onError(CometChatException e) {
+            }
+        });
     }
 
     @Override
@@ -175,6 +198,8 @@ public class Login extends AppCompatActivity {
                         editor.putString("type", type);
                         editor.apply();
 
+                        loginUserCometChat(currentUser.getUid());
+
                         if (type.equals("Student")){
                             Intent intent = new Intent(Login.this, HomeStudent.class);
                             startActivity(intent);
@@ -186,7 +211,6 @@ public class Login extends AppCompatActivity {
                             finish();
                         }
 
-                        Toast.makeText(Login.this, type, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(Login.this, "User DO NOT exist", Toast.LENGTH_SHORT).show();
                     }
@@ -197,5 +221,19 @@ public class Login extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void loginUserCometChat(String uId) {
+        CometChatUIKit.login(uId, new CometChat.CallbackListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                System.out.println("Login Comet Chat Successfull");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                System.out.println("Login Comet Chat FAILED!!!");
+            }
+        });
     }
 }

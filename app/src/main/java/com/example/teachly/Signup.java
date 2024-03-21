@@ -21,6 +21,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chatuikit.shared.cometchatuikit.CometChatUIKit;
 import com.example.teachly.Classes.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -179,5 +182,25 @@ public class Signup extends AppCompatActivity {
         User user = new User(currentUser.getUid(),email, password, name, phone, type);
 
         reference.child(user.getUserId()).setValue(user);
+
+        createUserCometChat(currentUser.getUid(), name);
+    }
+
+    public void createUserCometChat (String uId, String name) {
+        com.cometchat.chat.models.User user = new com.cometchat.chat.models.User();
+        user.setUid(uId);
+        user.setName(name);
+
+        CometChatUIKit.createUser(user, new CometChat.CallbackListener<com.cometchat.chat.models.User>() {
+            @Override
+            public void onSuccess(com.cometchat.chat.models.User user) {
+                System.out.println("User created on Comet Chat");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                System.out.println("User creation on Comet Chat FAILED!");
+            }
+        });
     }
 }

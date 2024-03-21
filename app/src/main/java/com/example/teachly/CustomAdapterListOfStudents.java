@@ -103,7 +103,8 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                 btnTalkToStudent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, "Talk to ", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(context, ChatOneOnOne.class);
+                        context.startActivity(intent);
                     }
                 });
 
