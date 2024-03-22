@@ -26,6 +26,7 @@ public class ChatOneOnOne extends AppCompatActivity {
 
         User test = new User(myUser.getUserId(), myUser.getFullName());
         CometChatMessages newConversation = findViewById(R.id.messageOneonOne);
+
         newConversation.setUser(test);
         newConversation.setBackgroundColor(getResources().getColor(R.color.lightGreen));
         //MessageListConfiguration configuration = new MessageListConfiguration();

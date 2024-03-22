@@ -9,9 +9,11 @@
     android:orientation="vertical"
     android:background="@color/lightGreen">
 
-    <com.cometchat.chatuikit.conversationswithmessages.CometChatConversationsWithMessages
-        android:id="@+id/conversations_with_messages"
+    <include layout="@layout/menu_bar_with_logo"/>
+
+    <com.cometchat.chatuikit.conversations.CometChatConversations
+        android:id="@+id/conversation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
