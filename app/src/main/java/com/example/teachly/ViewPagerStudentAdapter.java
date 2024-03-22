@@ -28,7 +28,7 @@ public class ViewPagerStudentAdapter extends FragmentStateAdapter {
             case 1:
                 return new FragmentTeacherChat();
             case 2:
-                return new FragmentStudentClassDetail(myClass.getDescription(), myClass.getCategory().name(), myTeacher.getFullName(), myTeacher.getEmail(), myTeacher.getPhoneNumber(), myClass.getClassId());
+                return new FragmentStudentClassDetail(myClass, myTeacher);
         };
         return new FragmentTeacherActivity();
     }

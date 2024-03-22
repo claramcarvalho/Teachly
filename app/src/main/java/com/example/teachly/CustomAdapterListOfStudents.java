@@ -104,6 +104,7 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ChatOneOnOne.class);
+                        intent.putExtra("userForChat", listStudent.get(position));
                         context.startActivity(intent);
                     }
                 });
