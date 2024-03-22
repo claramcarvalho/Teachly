@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.Class;
+import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +31,10 @@ import org.w3c.dom.Text;
  */
 public class FragmentStudentClassDetail extends Fragment {
 
-    String classDescription, classCategory, teacherName, teacherEmail, teacherPhone, classId, userId;
+    Class myClass;
+    String userId;
+
+    User myTeacher;
     SharedPreferences sharedPreferences;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -45,13 +50,9 @@ public class FragmentStudentClassDetail extends Fragment {
         // Required empty public constructor
     }
 
-    public FragmentStudentClassDetail(String classDescription, String classCategory, String teacherName, String teacherEmail, String teacherPhone, String classId) {
-        this.classDescription = classDescription;
-        this.classCategory = classCategory;
-        this.teacherName = teacherName;
-        this.teacherEmail = teacherEmail;
-        this.teacherPhone = teacherPhone;
-        this.classId = classId;
+    public FragmentStudentClassDetail(Class myClass, User myTeacher) {
+        this.myClass = myClass;
+        this.myTeacher = myTeacher;
     }
 
 
@@ -98,23 +99,25 @@ public class FragmentStudentClassDetail extends Fragment {
         TextView teacherPhone = rootView.findViewById(R.id.tutorPhoneClassDetail);
         TextView btnTalkToTeacher = rootView.findViewById(R.id.btnStudentTalkTeacher);
         TextView btnDropClass = rootView.findViewById(R.id.btnStudentDropClass);
-        classDesc.setText(this.classDescription);
-        classTag.setText(this.classCategory);
-        teacherName.setText(this.teacherName);
-        teacherEmail.setText(this.teacherEmail);
-        teacherPhone.setText(this.teacherPhone);
+        classDesc.setText(this.myClass.getDescription());
+        classTag.setText(this.myClass.getCategory().name());
+        teacherName.setText(this.myTeacher.getFullName());
+        teacherEmail.setText(this.myTeacher.getEmail());
+        teacherPhone.setText(this.myTeacher.getPhoneNumber());
 
         btnTalkToTeacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), ChatOneOnOne.class);
+                intent.putExtra("userForChat", myTeacher);
+                getContext().startActivity(intent);
             }
         });
 
         btnDropClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes/"+classId+"/students");
+                DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes/"+myClass.getClassId()+"/students");
                 databaseReferenceClasses.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
