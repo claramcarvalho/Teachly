@@ -18,6 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MenuBar {
 
     private Context context;
+    SharedPreferences sharedPreferences;
+    static String typeUser;
+
 
     public MenuBar(Context context) {
         this.context = context;
@@ -28,6 +31,9 @@ public class MenuBar {
 
         View customActionBarView = LayoutInflater.from(context).inflate(R.layout.menu_bar_with_logo, null);
         AppCompatActivity activity = (AppCompatActivity) context;
+
+        sharedPreferences = context.getSharedPreferences("Teachly", Context.MODE_PRIVATE);
+        typeUser = sharedPreferences.getString("type", "");
 
         android.app.ActionBar actionBar = ((AppCompatActivity) context).getActionBar();
         if (actionBar != null) {
@@ -69,6 +75,21 @@ public class MenuBar {
                     editor.apply();
                     Intent intent = new Intent(context, Login.class);
                     context.startActivity(intent);
+                }
+                else if (item.getItemId() == R.id.conversations){
+                    Intent intent = new Intent(context, ChatConversations.class);
+                    context.startActivity(intent);
+                }
+                else if (item.getItemId() == R.id.homePage){
+                    if (typeUser.equals("Student")){
+                        Intent intent = new Intent(context, HomeStudent.class);
+                        context.startActivity(intent);
+                    }
+                    if (typeUser.equals("Teacher")){
+                        Intent intent = new Intent(context, HomeTeacher.class);
+                        context.startActivity(intent);
+                    }
+
                 }
                 return false;
             }
