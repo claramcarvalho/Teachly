@@ -30,8 +30,6 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
     ArrayList<Class> list;
     LayoutInflater inflater;
 
-    User teacher;
-
     public CustomAdapterListOfTutors (Context appContext, ArrayList<Class> list) {
         context = appContext;
         this.list = list;
@@ -51,10 +49,7 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-
-
-
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.list_item_tutors,null);
@@ -64,7 +59,6 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
         classCategory.setText(this.list.get(position).getCategory().name());
 
         String teacherId = this.list.get(position).getTeacherUId();
-
         RelativeLayout layout = convertView.findViewById(R.id.btnGoCheckTutor);
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +67,6 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
-
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
                 Query findTutor = databaseReference.orderByChild("userId").equalTo(teacherId);
