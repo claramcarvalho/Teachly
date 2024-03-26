@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.teachly.Classes.DeleteUserTask;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -27,6 +28,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class EditProfile extends AppCompatActivity {
     TextView btnDeleteAccount, btnSaveAccount;
@@ -137,7 +146,12 @@ public class EditProfile extends AppCompatActivity {
                                             if (snapshot.exists()) {
                                                 snapshot.child(uId).getRef().removeValue();
 
-                                                removeFromCometChat(uId);
+                                                try {
+                                                    removeFromCometChat(uId);
+                                                } catch (IOException e) {
+                                                    System.out.println(e.getMessage());
+                                                    Toast.makeText(EditProfile.this, "Error deleting user from Chat", Toast.LENGTH_SHORT).show();
+                                                }
 
                                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                                 editor.remove("uId");
@@ -197,7 +211,12 @@ public class EditProfile extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 snapshot.child(uId).getRef().removeValue();
 
-                                removeFromCometChat(uId);
+                                try {
+                                    removeFromCometChat(uId);
+                                } catch (IOException e) {
+                                    System.out.println(e.getMessage());
+                                    Toast.makeText(EditProfile.this, "Error deleting user from Chat", Toast.LENGTH_SHORT).show();
+                                }
                                 removeFromClass(uId);
 
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -281,9 +300,8 @@ public class EditProfile extends AppCompatActivity {
         return false;
     }
 
-    private void removeFromCometChat(String uId){
-
-
+    private void removeFromCometChat(String uId) throws IOException {
+        new DeleteUserTask(uId).execute();
     }
 
 
@@ -295,6 +313,7 @@ public class EditProfile extends AppCompatActivity {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
+                        String classId = dataSnapshot.child("classId").getValue(String.class);
                         DataSnapshot snapshotStudents = dataSnapshot.child("students");
                         for (DataSnapshot student : snapshotStudents.getChildren()) {
                             if (student.getValue(String.class).equals(uId)){

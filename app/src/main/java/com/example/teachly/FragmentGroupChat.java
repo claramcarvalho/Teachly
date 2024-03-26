@@ -96,7 +96,8 @@ public class FragmentGroupChat extends Fragment {
         tags.add(myClass.getClassId());
         ConversationsRequest.ConversationsRequestBuilder conversationsRequest = new ConversationsRequest.ConversationsRequestBuilder()
                 .setLimit(1)
-                .setGroupTags(tags);
+                .setGroupTags(tags)
+                .setConversationType(CometChatConstants.CONVERSATION_TYPE_GROUP);
 
         conversations.setConversationsRequestBuilder(conversationsRequest);
 

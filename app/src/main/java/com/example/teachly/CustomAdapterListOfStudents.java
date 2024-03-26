@@ -1,5 +1,6 @@
 package com.example.teachly;
 
+import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -106,6 +107,10 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                         Intent intent = new Intent(context, ChatOneOnOne.class);
                         intent.putExtra("userForChat", listStudent.get(position));
                         context.startActivity(intent);
+                        if (context instanceof Activity) {
+                            //Toast.makeText(context.getApplicationContext(), "Context is Activity", Toast.LENGTH_SHORT).show();
+                            ((Activity)context).finish();
+                        }
                     }
                 });
 
