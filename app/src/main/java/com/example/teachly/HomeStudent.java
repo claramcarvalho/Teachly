@@ -70,7 +70,6 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_student_add_class, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(HomeStudent.this);
                 builder.setView(dialogView);
-                //builder.setTitle("Search new tutors");
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
@@ -111,72 +110,48 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     public void loadTeachersByCategory(String category) {
-        if (category.equals("ALL CATEGORIES")) {
-            Query findClass = referenceClasses.orderByChild("classId");
-            findClass.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        ArrayList<Class> listOfClassesSearch = new ArrayList<>();
-                        for (DataSnapshot classSnapshot : snapshot.getChildren()) {
-                            String classId = classSnapshot.child("classId").getValue(String.class);
-                            String name = classSnapshot.child("name").getValue(String.class);
-                            String description = classSnapshot.child("description").getValue(String.class);
-                            String color = classSnapshot.child("color").getValue(String.class);
-                            String category = classSnapshot.child("category").getValue(String.class);
-                            String teacherUId = classSnapshot.child("teacherUId").getValue(String.class);
-
-                            Class newClass = new Class(classId,name,description,teacherUId,color,EnumCategoryClass.valueOf(category));
-                            listOfClassesSearch.add(newClass);
-                        }
-
-                        CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(),listOfClassesSearch);
-                        listOfClassesSearchListView.setAdapter(adapter);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else {
-            Query findClass = referenceClasses.orderByChild("category").equalTo(category);
-            findClass.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        ArrayList<Class> listOfClassesSearch = new ArrayList<>();
-                        for (DataSnapshot classSnapshot : snapshot.getChildren()) {
-                            String classId = classSnapshot.child("classId").getValue(String.class);
-                            String name = classSnapshot.child("name").getValue(String.class);
-                            String description = classSnapshot.child("description").getValue(String.class);
-                            String color = classSnapshot.child("color").getValue(String.class);
-                            String category = classSnapshot.child("category").getValue(String.class);
-                            String teacherUId = classSnapshot.child("teacherUId").getValue(String.class);
-
-                            Class newClass = new Class(classId,name,description,teacherUId,color,EnumCategoryClass.valueOf(category));
-                            listOfClassesSearch.add(newClass);
-                        }
-
-                        CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(),listOfClassesSearch);
-                        listOfClassesSearchListView.setAdapter(adapter);
-                    }
-                    else {
-                        listOfClassesSearchListView.setAdapter(null);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+        Query findClass;
+        if (category.equals("ALL CATEGORIES")){
+            findClass = referenceClasses.orderByChild("classId");
         }
+        else {
+            findClass = referenceClasses.orderByChild("category").equalTo(category);
+        }
+        findClass.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    ArrayList<Class> listOfClassesSearch = new ArrayList<>();
+                    for (DataSnapshot classSnapshot : snapshot.getChildren()) {
+                        String classId = classSnapshot.child("classId").getValue(String.class);
+                        String name = classSnapshot.child("name").getValue(String.class);
+                        String description = classSnapshot.child("description").getValue(String.class);
+                        String color = classSnapshot.child("color").getValue(String.class);
+                        String category = classSnapshot.child("category").getValue(String.class);
+                        String teacherUId = classSnapshot.child("teacherUId").getValue(String.class);
+
+                        Class newClass = new Class(classId,name,description,teacherUId,color,EnumCategoryClass.valueOf(category));
+                        listOfClassesSearch.add(newClass);
+                    }
+
+                    CustomAdapterListOfTutors adapter = new CustomAdapterListOfTutors(getApplicationContext(),listOfClassesSearch);
+                    listOfClassesSearchListView.setAdapter(adapter);
+                }
+                else {
+                    listOfClassesSearchListView.setAdapter(null);
+                    Toast.makeText(HomeStudent.this, "No " + category + " classes available!", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     public static void loadAllClassesInList(Context context, ArrayList<Class> classes){

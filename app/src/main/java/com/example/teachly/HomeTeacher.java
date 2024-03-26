@@ -24,6 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedDispatcher;
 
+import com.cometchat.chat.constants.CometChatConstants;
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chat.models.Group;
 import com.example.teachly.Classes.Activity;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
@@ -154,6 +158,8 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
             Toast.makeText(HomeTeacher.this, "Class " + className + " was successfully created", Toast.LENGTH_SHORT).show();
 
 
+
+
         }
         catch (Exception ex){
             Toast.makeText(HomeTeacher.this, "Class was not created, try again!", Toast.LENGTH_SHORT).show();
@@ -164,4 +170,25 @@ public class HomeTeacher extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
+    public static void createChatGroup(Class createdClass) {
+        String classId = createdClass.getClassId();
+        String className = createdClass.getName();
+        String groupType = CometChatConstants.GROUP_TYPE_PUBLIC;
+        String groupPassword = "";
+        Group group = new Group(classId, className, groupType, groupPassword);
+        List<String> tags = new ArrayList<>();
+        tags.add(classId);
+        group.setTags(tags);
+        CometChat.createGroup(group, new CometChat.CallbackListener<Group>() {
+            @Override
+            public void onSuccess(Group group) {
+                System.out.println("Group created");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                System.out.println("Group was not created: "+ e.getMessage());
+            }
+        });
+    }
 }

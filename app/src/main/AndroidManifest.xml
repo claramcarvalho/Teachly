@@ -17,9 +17,6 @@
             android:name=".ChatConversations"
             android:exported="false" />
         <activity
-            android:name=".Classes.ChatConversations"
-            android:exported="false" />
-        <activity
             android:name=".ChatOneOnOne"
             android:exported="false" />
         <activity

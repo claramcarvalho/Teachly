@@ -136,7 +136,7 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditClass.this);
                 builder.setTitle("Delete Class");
                 builder.setMessage("Are you sure you want to delete this class?\nThis action cannot be undone!");
-                builder.setPositiveButton("Delete Account", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Delete Class", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

@@ -84,8 +84,12 @@ public class EditProfile extends AppCompatActivity {
                                             if (snapshot.exists()) {
                                                 snapshot.child(uId).getRef().removeValue();
 
+                                                removeFromCometChat(uId);
+                                                removeFromClass(uId);
+
                                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                                 editor.remove("uId");
+                                                editor.remove("type");
                                                 editor.apply();
 
                                                 AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
@@ -188,5 +192,16 @@ public class EditProfile extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void removeFromCometChat(String uId){
+
+
+    }
+
+
+    private void removeFromClass(String uId){
+
+
     }
 }
