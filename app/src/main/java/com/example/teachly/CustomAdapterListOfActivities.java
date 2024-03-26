@@ -28,6 +28,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
 
 import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.ActivityDateComparator;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumTypeActivity;
 import com.example.teachly.Classes.User;
@@ -42,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +61,7 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
 
     public CustomAdapterListOfActivities (Context appContext,  ArrayList<Activity> listActivities, String classId) {
         context = appContext;
+        Collections.sort(listActivities, new ActivityDateComparator());
         this.listActivities = listActivities;
         this.classId = classId;
         inflater = LayoutInflater.from(appContext);

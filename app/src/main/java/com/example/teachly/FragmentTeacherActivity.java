@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.teachly.Classes.Activity;
+import com.example.teachly.Classes.ActivityDateComparator;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
 import com.example.teachly.Classes.EnumTypeActivity;
@@ -34,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -190,6 +192,7 @@ public class FragmentTeacherActivity extends Fragment implements AdapterView.OnI
                             Class.loadAllClassesByTeacherUId(getContext(), userId);
 
                             listActivities.add(newActivity);
+                            Collections.sort(listActivities,new ActivityDateComparator());
                             adapter.notifyDataSetChanged();
                             dialog.dismiss();
 
