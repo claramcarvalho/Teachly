@@ -297,7 +297,8 @@ public class CustomAdapterListOfActivities extends BaseAdapter implements Adapte
         TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                String selectedTime = hourOfDay + ":" + minute;
+                //formatting minutes and hours to include 2 characters
+                String selectedTime = String.format("%02d:%02d", hourOfDay, minute);
                 time.setText(selectedTime);
             }
         }, hour, minute, true);
