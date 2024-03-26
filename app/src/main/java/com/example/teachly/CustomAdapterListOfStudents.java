@@ -28,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import android.widget.DatePicker;
 
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
@@ -108,7 +110,6 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                         intent.putExtra("userForChat", listStudent.get(position));
                         context.startActivity(intent);
                         if (context instanceof Activity) {
-                            //Toast.makeText(context.getApplicationContext(), "Context is Activity", Toast.LENGTH_SHORT).show();
                             ((Activity)context).finish();
                         }
                     }
@@ -132,6 +133,17 @@ public class CustomAdapterListOfStudents extends BaseAdapter implements AdapterV
                                         String uId = studentSnapshot.getValue(String.class);
                                         if (uId.equals(userId)){
                                             studentSnapshot.getRef().removeValue();
+                                            CometChat.kickGroupMember(uId, classId, new CometChat.CallbackListener<String>() {
+                                                @Override
+                                                public void onSuccess(String s) {
+                                                    System.out.println("Student was removed from Group chat");
+                                                }
+
+                                                @Override
+                                                public void onError(CometChatException e) {
+                                                    System.out.println("Student was NOT removed from Group chat");
+                                                }
+                                            });
                                         }
                                     }
                                     for (User item : listStudent){

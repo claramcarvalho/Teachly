@@ -1,5 +1,6 @@
 package com.example.teachly;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;

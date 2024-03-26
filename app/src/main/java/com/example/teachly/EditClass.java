@@ -20,6 +20,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cometchat.chat.constants.CometChatConstants;
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chat.models.Group;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumCategoryClass;
 import com.google.firebase.database.DataSnapshot;
@@ -148,6 +152,18 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
                                 if (snapshot.exists()) {
                                     snapshot.child(myClass.getClassId()).getRef().removeValue();
 
+                                    CometChat.deleteGroup(myClass.getClassId(), new CometChat.CallbackListener<String>() {
+                                        @Override
+                                        public void onSuccess(String s) {
+                                            System.out.println("Group was deleted on Comet Chat");
+                                        }
+
+                                        @Override
+                                        public void onError(CometChatException e) {
+                                            System.out.println("Group was NOT deleted on Comet Chat");
+                                        }
+                                    });
+
                                     AlertDialog.Builder builder = new AlertDialog.Builder(EditClass.this);
                                     builder.setTitle("Class deleted");
                                     builder.setMessage("Your class " + myClass.getName() + " was deleted!!");
@@ -203,6 +219,18 @@ public class EditClass extends AppCompatActivity implements AdapterView.OnItemSe
     private boolean isClassNameChanged (){
         if (!myClass.getName().equals(edtClassName.getText().toString().trim())) {
             reference.child(myClass.getClassId()).child("name").setValue(edtClassName.getText().toString().trim());
+            Group group = new Group(myClass.getClassId(),edtClassName.getText().toString().trim(), CometChatConstants.GROUP_TYPE_PUBLIC,"");
+            CometChat.updateGroup(group, new CometChat.CallbackListener<Group>() {
+                @Override
+                public void onSuccess(Group group) {
+                    System.out.println("Group was updated on Comet Chat");
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+                    System.out.println("Group was NOT updated on Comet Chat");
+                }
+            });
             return true;
         }
         return false;
