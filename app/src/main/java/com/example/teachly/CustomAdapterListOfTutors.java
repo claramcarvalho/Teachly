@@ -1,10 +1,13 @@
 package com.example.teachly;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,9 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
     Context context;
     ArrayList<Class> list;
     LayoutInflater inflater;
+    ImageView btnTalkToTeacher;
+    String fullNameFound, emailFound, phoneFound, passwordFound;
+
 
     public CustomAdapterListOfTutors (Context appContext, ArrayList<Class> list) {
         context = appContext;
@@ -64,6 +70,7 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 View dialogView = LayoutInflater.from(parent.getContext()).inflate(R.layout.dialog_view_teacher, null);
+                btnTalkToTeacher = dialogView.findViewById(R.id.talkToNewTeacher);
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
@@ -75,9 +82,11 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
                             for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                                String fullNameFound = childSnapshot.child("fullName").getValue(String.class);
-                                String emailFound = childSnapshot.child("email").getValue(String.class);
-                                String phoneFound = childSnapshot.child("phoneNumber").getValue(String.class);
+
+                                fullNameFound = childSnapshot.child("fullName").getValue(String.class);
+                                emailFound = childSnapshot.child("email").getValue(String.class);
+                                phoneFound = childSnapshot.child("phoneNumber").getValue(String.class);
+                                passwordFound = childSnapshot.child("password").getValue(String.class);
                                 TextView fullname = dialogView.findViewById(R.id.nameTeacherViewTeacher);
                                 TextView email = dialogView.findViewById(R.id.emailTeacherViewTeacher);
                                 TextView phone = dialogView.findViewById(R.id.phoneTeacherViewTeacher);
@@ -92,6 +101,17 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
+                    }
+                });
+
+                btnTalkToTeacher.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        User myTeacher = new User(teacherId,emailFound,passwordFound,fullNameFound,phoneFound,"Teacher");
+                        Intent intent = new Intent(context, ChatOneOnOne.class);
+                        intent.putExtra("userForChat", myTeacher);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
                     }
                 });
             }

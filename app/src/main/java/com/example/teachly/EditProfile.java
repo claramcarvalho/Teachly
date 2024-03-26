@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chat.models.User;
 import com.example.teachly.Classes.DeleteUserTask;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -284,6 +287,19 @@ public class EditProfile extends AppCompatActivity {
             referenceUsers.child(uId).child("fullName").setValue(edtFullName.getText().toString().trim());
             fullName = edtFullName.getText().toString().trim();
             referenceClasses.orderByChild("teacher/userId").equalTo(uId);
+
+            User userEdit = new User(uId,fullName);
+            CometChat.updateUser(userEdit, "a90d769410e09cc76b8c9b5a4aaec7b84a2582c3", new CometChat.CallbackListener<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    System.out.println("User was updated on Comet Chat");
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+                    System.out.println("User was NOT updated on Comet Chat");
+                }
+            });
 
 
             return true;
