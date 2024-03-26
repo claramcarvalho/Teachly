@@ -63,6 +63,7 @@ public class MenuBar {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.editProfile){
                     Intent intent = new Intent(context, EditProfile.class);
+                    intent.putExtra("typeUser",typeUser);
                     context.startActivity(intent);
                 }
                 else if (item.getItemId() == R.id.logOff){
