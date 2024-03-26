@@ -110,7 +110,6 @@ public class HomeStudent extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     public void loadTeachersByCategory(String category) {

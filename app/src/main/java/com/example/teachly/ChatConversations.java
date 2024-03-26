@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.cometchat.chat.models.AppEntity;
 import com.cometchat.chat.models.Conversation;
+import com.cometchat.chat.models.Group;
 import com.cometchat.chat.models.User;
 import com.cometchat.chatuikit.contacts.ContactsConfiguration;
 import com.cometchat.chatuikit.conversations.CometChatConversations;
@@ -20,6 +21,7 @@ import com.cometchat.chatuikit.messages.MessagesConfiguration;
 import com.cometchat.chatuikit.shared.resources.utils.item_clickListener.OnItemClickListener;
 import com.cometchat.chatuikit.shared.views.CometChatStatusIndicator.StatusIndicatorStyle;
 import com.cometchat.chatuikit.users.UsersConfiguration;
+import com.example.teachly.Classes.Class;
 
 public class ChatConversations extends AppCompatActivity {
 
@@ -35,15 +37,29 @@ public class ChatConversations extends AppCompatActivity {
             @Override
             public void OnItemClick(Conversation conversation, int i) {
                 AppEntity appEntity = conversation.getConversationWith();
-                User userFromConversation = (User) appEntity;
-                com.example.teachly.Classes.User ourUser = new com.example.teachly.Classes.User();
-                ourUser.setUserId(userFromConversation.getUid());
-                ourUser.setFullName(userFromConversation.getName());
+                String conversationType = conversation.getConversationType();
                 Intent intent = new Intent(ChatConversations.this, ChatOneOnOne.class);
-                intent.putExtra("userForChat", ourUser);
-                startActivity(intent);
 
-                //AJUSTAR PRA QUANDO A PESSOA CLICAR EM UM GRUPO AO INVES DE UMA CONVERSA PRIVADA
+                if (conversationType.equals("user")){
+                    User userFromConversation = (User) appEntity;
+                    com.example.teachly.Classes.User ourUser = new com.example.teachly.Classes.User();
+                    ourUser.setUserId(userFromConversation.getUid());
+                    ourUser.setFullName(userFromConversation.getName());
+                    intent.putExtra("userForChat", ourUser);
+                }
+                else {
+                    Group groupFromConversation = (Group) appEntity;
+                    Class myClass = new Class(groupFromConversation.getGuid(), groupFromConversation.getName(), null, groupFromConversation.getOwner(), null, null);
+                    intent.putExtra("classForChat", myClass);
+                    intent.putExtra("groupMembers", groupFromConversation.getMembersCount());
+                    intent.putExtra("groupCreatedAt", groupFromConversation.getCreatedAt());
+                    intent.putExtra("groupUpdatedAt", groupFromConversation.getUpdatedAt());
+                    intent.putExtra("groupJoinedAt", groupFromConversation.getJoinedAt());
+                    intent.putExtra("groupScope", groupFromConversation.getScope());
+
+                }
+
+                startActivity(intent);
             }
         });
 

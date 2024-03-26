@@ -99,7 +99,7 @@ public class ClassPageTeacher extends AppCompatActivity {
                                         listStudents.add(newUser);
                                     }
 
-                                    loadClassPageTeacher(listStudents, myClass.getActivities(), myClass.getClassId());
+                                    loadClassPageTeacher(listStudents, myClass);
                                 }
                             }
 
@@ -111,7 +111,7 @@ public class ClassPageTeacher extends AppCompatActivity {
                     }
                 }
                 else {
-                    loadClassPageTeacher(new ArrayList<>(), myClass.getActivities(), myClass.getClassId());
+                    loadClassPageTeacher(new ArrayList<>(), myClass);
                 }
             }
 
@@ -122,8 +122,8 @@ public class ClassPageTeacher extends AppCompatActivity {
         });
     }
 
-    public void loadClassPageTeacher(ArrayList<User> listStudents, ArrayList<Activity> listActivities, String classId){
-        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this, listStudents, listActivities, classId);
+    public void loadClassPageTeacher(ArrayList<User> listStudents, Class myClass){
+        ViewPagerTeacherAdapter pagerTeacherAdapter = new ViewPagerTeacherAdapter(this, listStudents, myClass);
         viewPagerTeacher.setAdapter(pagerTeacherAdapter);
 
         viewPagerTeacher.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

@@ -136,6 +136,7 @@ public class Class implements Serializable {
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
 
+                    HomeTeacher.createChatGroup(newClass);
                     Class.loadAllClassesByTeacherUId(context, uId);
                 }
                 else {
@@ -143,6 +144,7 @@ public class Class implements Serializable {
 
                     DatabaseReference databaseReferenceClasses = FirebaseDatabase.getInstance().getReference("classes");
                     databaseReferenceClasses.child(newClass.getClassId().toString()).setValue(newClass);
+                    HomeTeacher.createChatGroup(newClass);
                     Class.loadAllClassesByTeacherUId(context, uId);
                 }
             }
@@ -194,6 +196,7 @@ public class Class implements Serializable {
                         listOfClasses.add(newClass);
                     }
                     HomeTeacher.loadAllClassesInList(context, listOfClasses);
+
                 }
             }
 

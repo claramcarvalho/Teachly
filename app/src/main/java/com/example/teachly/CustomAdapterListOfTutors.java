@@ -49,7 +49,7 @@ public class CustomAdapterListOfTutors extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.list_item_tutors,null);

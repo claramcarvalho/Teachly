@@ -20,6 +20,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cometchat.chat.constants.CometChatConstants;
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.exceptions.CometChatException;
+import com.cometchat.chat.models.GroupMember;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.User;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +34,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -161,6 +166,7 @@ public class FragmentTeacherStudent extends Fragment {
                                             DatabaseReference newStudentRef = classRef.child("students").push();
                                             newStudentRef.setValue(uId);
 
+                                            addStudentToTheGroupChat(classId, uId);
                                             Class.loadAllClassesByTeacherUId(getContext(), userId);
 
                                             Toast.makeText(getContext(), "Student was added to this class!", Toast.LENGTH_SHORT).show();
@@ -184,5 +190,22 @@ public class FragmentTeacherStudent extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void addStudentToTheGroupChat(String classId, String studentId){
+        List<GroupMember> members = new ArrayList<>();
+        members.add(new GroupMember(studentId, CometChatConstants.SCOPE_PARTICIPANT));
+
+        CometChat.addMembersToGroup(classId, members, null, new CometChat.CallbackListener<HashMap<String, String>>() {
+            @Override
+            public void onSuccess(HashMap<String, String> stringStringHashMap) {
+                System.out.println("Student was added to the chat group");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                System.out.println("Student was not added to the chat group");
+            }
+        });
     }
 }

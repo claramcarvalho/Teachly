@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cometchat.chat.constants.CometChatConstants;
+import com.cometchat.chat.core.CometChat;
+import com.cometchat.chat.models.Group;
+import com.cometchat.chatuikit.messages.CometChatMessages;
 import com.example.teachly.Classes.Activity;
 import com.example.teachly.Classes.Class;
 import com.example.teachly.Classes.EnumTypeActivity;
@@ -49,7 +53,10 @@ public class ClassPageStudent extends AppCompatActivity {
         tabStudent = findViewById(R.id.tabLayoutStudent);
         viewPagerStudent = findViewById(R.id.viewPagerStudent);
 
+
         loadClassPageStudent(myClass,myTeacher);
+
+
     }
 
     public void loadClassPageStudent(Class myClass, User myTeacher){
